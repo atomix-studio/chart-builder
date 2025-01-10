@@ -1,0 +1,18 @@
+{
+  "name": "com.atomixstudio.chart-builder",
+  "version": "1.0.0",
+  "displayName": "Chart Builder",
+  "description": "A UIToolkit library for creating charts",
+  "unity": "6000.0",
+ "keywords": [
+    "charts",
+    "ui",
+    "ui-toolkit",
+    "procedural"
+  ],
+  "author": {
+    "name": "Enzo Boudart",
+    "email": "atomix.games.studio@gmail.com",
+    "url": "https://enzoboudart.wixsite.com/portfolio"
+  }
+}
