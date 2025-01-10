@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Atom.MachineLearning.Core.Maths
-{
+namespace Atomix.ChartBuilder.Math 
+{ 
     public static class MathHelpers
     {      
         public static double Lerp(double value, double v_min, double v_max)
@@ -25,8 +22,8 @@ namespace Atom.MachineLearning.Core.Maths
 
             for(int i = 0; i < matrix.GetLength(0); ++i)
             {
-                max = Math.Max(matrix[i, columnIndex], max);
-                min = Math.Min(matrix[i, columnIndex], min);
+                max = System.Math.Max(matrix[i, columnIndex], max);
+                min = System.Math.Min(matrix[i, columnIndex], min);
             }
         }
 
@@ -37,8 +34,8 @@ namespace Atom.MachineLearning.Core.Maths
 
             for (int i = 0; i < vector.Count; ++i)
             {
-                max = Math.Max(vector[i], max);
-                min = Math.Min(vector[i], min);
+                max = System.Math.Max(vector[i], max);
+                min = System.Math.Min(vector[i], min);
             }
         }
 
@@ -49,8 +46,8 @@ namespace Atom.MachineLearning.Core.Maths
 
             for (int i = 0; i < vector.Length; ++i)
             {
-                max = Math.Max(vector[i], max);
-                min = Math.Min(vector[i], min);
+                max = System.Math.Max(vector[i], max);
+                min = System.Math.Min(vector[i], min);
             }
         }
     }

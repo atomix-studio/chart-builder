@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace ITF.Modules.UIComponent.ChartBuilder.VisualElements
+namespace Atomix.ChartBuilder.VisualElements
 {
     public class AxisChart : ChartBaseElement
     {

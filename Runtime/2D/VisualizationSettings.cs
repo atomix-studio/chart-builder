@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace ITF.Modules.UIComponent.ChartBuilder
+namespace Atomix.ChartBuilder.Settings
 {
     [CreateAssetMenu(menuName = "ScriptableObjects/VisualizationSettigns")]
     public class VisualizationSettings : ScriptableObject

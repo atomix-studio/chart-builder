@@ -1,9 +1,10 @@
-﻿using Atom.MachineLearning.Core.Maths;
+﻿using Atomix.ChartBuilder.Math;
 using System;
 using UnityEngine;
 
-namespace ITF.Modules.UIComponent.ChartBuilder
+namespace Atomix.ChartBuilder
 {
+    [ExecuteInEditMode]
     public class VisualizationSheetTests : MonoBehaviour
     {
         [SerializeField] private VisualizationSheet _visualizationSheet;
@@ -20,7 +21,7 @@ namespace ITF.Modules.UIComponent.ChartBuilder
 
             for (int i = 0; i < 100; ++i)
             {
-                points[i] = Math.Pow(i, 2);
+                points[i] = System.Math.Pow(i, 2);
             }
 
             var dimension = new Vector2Int(500, 500);
@@ -47,7 +48,7 @@ namespace ITF.Modules.UIComponent.ChartBuilder
 
             for (int i = 1; i < 100; ++i)
             {
-                points[i] = 1f / Math.Pow(i, 2);
+                points[i] = 1f / System.Math.Pow(i, 2);
             }
 
             var parent = _visualizationSheet.AddContainer("c1", Color.green, new Vector2Int(500, 500));
@@ -81,12 +82,35 @@ namespace ITF.Modules.UIComponent.ChartBuilder
 
             for (int i = 0; i < pCount; ++i)
             {
-                points[i, 0] = MathRandom.Shared.Range(-X, X);
-                points[i, 1] = MathRandom.Shared.Range(-Y, Y);
+                points[i, 0] = RandomHelpers.Shared.Range(-X, X);
+                points[i, 1] = RandomHelpers.Shared.Range(-Y, Y);
             }
 
             var scatter = _visualizationSheet.Add_Scatter(points, new Vector2Int(300, 300));
             scatter.SetPadding(10, 10, 10, 10);
+        }
+
+        private void OnGUI()
+        {
+            if (GUILayout.Button("1"))
+            {
+                Test_SimpleLine();
+            }
+
+            if (GUILayout.Button("2"))
+            {
+                Test_SimpleLine2();
+            }
+
+            if (GUILayout.Button("3"))
+            {
+                Test_SimpleLine3();
+            }
+
+            if (GUILayout.Button("4"))
+            {
+                Test_Scatter();
+            }
         }
     }
 }

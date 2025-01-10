@@ -1,13 +1,9 @@
-﻿using Atom.MachineLearning.Core.Maths;
+﻿using Atomix.ChartBuilder.Math;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace ITF.Modules.UIComponent.ChartBuilder.VisualElements
+namespace Atomix.ChartBuilder.VisualElements
 {
     public class Scatter2DChart : ChartBaseElement
     {

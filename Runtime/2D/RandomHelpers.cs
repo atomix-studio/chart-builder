@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Atom.MachineLearning.Core.Maths
+namespace Atomix.ChartBuilder.Math
 {
-    public static class MathRandom
+    public static class RandomHelpers
     {
         private static Random _shared;
 
@@ -44,36 +44,6 @@ namespace Atom.MachineLearning.Core.Maths
                 return minValue;
 
             return random.Next(minValue, maxValue);
-        }
-
-        public static int WeightedIndex(this Random random, double[] weights)
-        {
-            // Normalize weights to sum to 1 (in case they're not already percentages)
-            double totalWeight = 0;
-            foreach (var weight in weights)
-                totalWeight += weight;
-
-            // Create cumulative probabilities
-            double[] cumulative = new double[weights.Length];
-            double cumulativeSum = 0;
-            for (int i = 0; i < weights.Length; i++)
-            {
-                cumulativeSum += weights[i] / totalWeight;
-                cumulative[i] = cumulativeSum;
-            }
-
-            // Generate a random number between 0 and 1
-            double randomValue = random.NextDouble();
-
-            // Determine the index based on the random value
-            for (int i = 0; i < cumulative.Length; i++)
-            {
-                if (randomValue <= cumulative[i])
-                    return i;
-            }
-
-            // Fallback (should not reach here if weights are correct)
-            return -1;
         }
     }
 }

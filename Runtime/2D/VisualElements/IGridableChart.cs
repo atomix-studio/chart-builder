@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ITF.Modules.UIComponent.ChartBuilder.VisualElements
+namespace Atomix.ChartBuilder.VisualElements
 {
     public interface IGridableChart
     {

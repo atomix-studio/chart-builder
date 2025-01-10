@@ -1,5 +1,5 @@
-﻿using Atom.MachineLearning.Core.Maths;
-using ITF.Modules.UIComponent.ChartBuilder.VisualElements;
+﻿using Atomix.ChartBuilder.Math;
+using Atomix.ChartBuilder.VisualElements;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace ITF.Modules.UIComponent.ChartBuilder.VisualElements
+namespace Atomix.ChartBuilder.VisualElements
 {
     /// <summary>
     /// A simple graphic to input
