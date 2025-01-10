@@ -1,8 +1,9 @@
 <engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/test.uss?fileID=7433441132597879392&amp;guid=92c1f612fc08ecb4482a827a178d9ce0&amp;type=3#test" />
     <engine:Label text="Label" />
-    <engine:VisualElement style="flex-grow: 1; flex-wrap: nowrap; align-items: center; flex-direction: column; justify-content: flex-start; align-content: flex-start;">
-        <engine:Label text="Label" style="align-items: auto;" />
-        <engine:Button text="Button" />
+    <engine:VisualElement style="flex-grow: 1; flex-wrap: nowrap; align-items: flex-start; flex-direction: column; justify-content: flex-start; align-content: auto; width: 100%;">
+        <engine:Label text="Label" class="c" style="flex-direction: row; align-items: flex-start; justify-content: flex-start; align-self: flex-start; position: absolute; left: 46px; transform-origin: left top; width: 247px; flex-wrap: nowrap; margin-top: 3px; margin-right: 3px; margin-bottom: 3px; margin-left: 3px; visibility: visible; overflow: visible; top: 6px;" />
+        <engine:Button text="Button" style="transform-origin: center; translate: 0 0;" />
         <engine:Button text="Button" />
     </engine:VisualElement>
 </engine:UXML>

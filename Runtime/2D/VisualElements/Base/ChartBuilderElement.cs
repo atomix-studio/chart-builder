@@ -111,16 +111,17 @@ namespace Atomix.ChartBuilder.VisualElements
             style.paddingBottom = b;
         }
 
-        public virtual void SetTitle(string title)
+        public virtual void SetTitle(string title, Font font, float size = 14, float topOffset = 10)
         {
             var label = new Label(title);
-            label.style.position = Position.Relative;
-            label.style.fontSize = 50;
-            label.style.unityFont = new StyleFont(StyleKeyword.Initial);
-
-            style.alignItems = new StyleEnum<Align>(Align.Center);
-            style.flexGrow = 1;
-
+            label.style.position = Position.Absolute;
+            label.style.fontSize = size;
+            label.style.unityFont = font;
+            //label.style.width = parent.resolvedStyle.width;
+            label.style.top = topOffset; 
+            //label.style.left = 0; // Center horizontally
+            label.style.alignSelf = Align.Center;  // Centers the label inside its container (vertically and horizontally)
+            label.style.unityTextAlign = new StyleEnum<TextAnchor>(TextAnchor.UpperCenter);
             this.Add(label);
             MarkDirtyRepaint();
         }

@@ -22,6 +22,9 @@ namespace Atomix.ChartBuilder.VisualElements
         public Scatter2DChart(Func<double[,]> getPoints)
         {
             _getPoints = getPoints;
+
+            InitDynamicRange(_getPoints());
+
             backgroundColor = _backgroundColor;
             generateVisualContent += GenerateGradientColoredScatter;
             generateVisualContent += DrawOrthonormalLines_BottomLeftAnchored;
@@ -42,11 +45,7 @@ namespace Atomix.ChartBuilder.VisualElements
             if (points.GetLength(1) != 2)
                 throw new Exception($"Scatter2D requires only 2 column matrix");
 
-            MathHelpers.ColumnMinMax(points, 0, out var range_x);
-            MathHelpers.ColumnMinMax(points, 1, out var range_y);
-
-            dynamic_range_x = range_x;
-            dynamic_range_y = range_y;
+            InitDynamicRange(points);
 
             for (int i = 0; i < points.GetLength(0); ++i)
             {
@@ -67,6 +66,15 @@ namespace Atomix.ChartBuilder.VisualElements
 
                 painter2D.Fill();
             }
+        }
+
+        private void InitDynamicRange(double[,] points)
+        {
+            MathHelpers.ColumnMinMax(points, 0, out var range_x);
+            MathHelpers.ColumnMinMax(points, 1, out var range_y);
+
+            dynamic_range_x = range_x;
+            dynamic_range_y = range_y;
         }
     }
 }

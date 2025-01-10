@@ -17,11 +17,5 @@ namespace Atomix.ChartBuilder.VisualElements
 
         public override Vector2Double dynamic_range_y { get; set; }
         public override Vector2Double dynamic_range_x { get; set; }
-
-        public AxisChart SetLineWidth(float lineWidth)
-        {
-            _lineWidth = lineWidth;
-            return this;
-        }
     }
 }

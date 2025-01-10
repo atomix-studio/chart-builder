@@ -76,7 +76,7 @@ namespace Atomix.ChartBuilder
             _visualizationSheet.Add_SimpleLine(points, 2, new Vector2Int(500, 500), null);
         }
 
-        private void Test_Scatter(int pCount = 100, int X = 50, int Y = 50)
+        private void Test_Scatter(int pCount = 100, int X = 100, int Y = 100)
         {
             _visualizationSheet.Awake();
 
@@ -88,39 +88,25 @@ namespace Atomix.ChartBuilder
                 points[i, 1] = RandomHelpers.Shared.Range(-Y, Y);
             }
 
-            var parent = _visualizationSheet.AddContainer("c0", Color.black, new Vector2Int(500, 500));
+            var parent = _visualizationSheet.AddContainer("c0", Color.black, new Vector2Int(750, 750));
             parent.SetPadding(5, 5, 5, 5);
             var scatter = _visualizationSheet.Add_Scatter(points, new Vector2Int(100, 100), parent);
-            parent.SetTitle("Scatter Graph");
             scatter.SetPadding(25, 25, 25, 25);
-            scatter.gridDelta = new Vector2Double(X * 2 / 10, X * 2 / 10);
+            scatter.gridDelta = new Vector2Double(X * 2 / 20, X * 2 / 20);
             scatter.gridColor = new Color(.9f, .9f, .9f, 1);
             scatter.DrawAutomaticGrid();
+            parent.SetTitle("Scatter Graph", _font);
         }
 
+        [SerializeField] private Font _font;
         private void Test_Texts()
         {
-            var doc = GetComponent<UIDocument>();
+            _visualizationSheet.Awake();
 
-            var root = doc.rootVisualElement;
-            root.Clear();
-            doc.panelSettings.targetTexture.Release();
-            doc.panelSettings.targetTexture.Create();
-
-            // Create the label
-            var label = new Label("Hello, World!");
-            label.style.position = Position.Absolute; // Use absolute positioning
-            label.style.top = 0; // Align to the top
-            label.style.left = new StyleLength(50);  // Add bas
-            label.style.color = Color.white;
-
-            /*
-                        var parent = _visualizationSheet.AddContainer("c0", Color.white, new Vector2Int(500, 500));
-                        parent.SetPadding(10, 10, 10, 10);
-                        parent.SetTitle("Scatter Graph");*/
-
-            root.Add(label);
-            root.MarkDirtyRepaint();
+            var parent = _visualizationSheet.AddContainer("c0", Color.white, new Vector2Int(500, 500));
+            parent.SetPadding(5, 5, 5, 5);
+            parent.SetTitle("Hello, World!", _font);
+            parent.Refresh();
         }
 
         private void OnGUI()
