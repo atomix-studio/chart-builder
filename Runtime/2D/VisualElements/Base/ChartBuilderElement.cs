@@ -111,8 +111,27 @@ namespace Atomix.ChartBuilder.VisualElements
             style.paddingBottom = b;
         }
 
+        public virtual void SetTitle(string title)
+        {
+            var label = new Label(title);
+            label.style.position = Position.Relative;
+            label.style.fontSize = 50;
+            label.style.unityFont = new StyleFont(StyleKeyword.Initial);
+
+            style.alignItems = new StyleEnum<Align>(Align.Center);
+            style.flexGrow = 1;
+
+            this.Add(label);
+            MarkDirtyRepaint();
+        }
+
         #endregion
 
 
+
+        public void Refresh()
+        {
+            MarkDirtyRepaint();
+        }
     }
 }

@@ -10,6 +10,8 @@ namespace Atomix.ChartBuilder.VisualElements
         private float _dotRadius = 5;
 
         private Func<double[,]> _getPoints;
+        public override Vector2Double dynamic_range_y { get; set; }
+        public override Vector2Double dynamic_range_x { get; set; }
 
         /// <summary>
         /// Assuming a matrix of N-Rows and 2-Columns (X and Y value)
@@ -17,12 +19,10 @@ namespace Atomix.ChartBuilder.VisualElements
         /// <param name="getPoints"></param>
         /// <param name="width"></param>
         /// <param name="height"></param>
-        public Scatter2DChart(Func<double[,]> getPoints, int width = 300, int height = 300)
+        public Scatter2DChart(Func<double[,]> getPoints)
         {
             _getPoints = getPoints;
-
-            style.backgroundColor = new StyleColor(Color.white);
-
+            backgroundColor = _backgroundColor;
             generateVisualContent += GenerateGradientColoredScatter;
             generateVisualContent += DrawOrthonormalLines_BottomLeftAnchored;
         }
@@ -31,7 +31,7 @@ namespace Atomix.ChartBuilder.VisualElements
         {
             var painter2D = ctx.painter2D;
 
-            painter2D.lineWidth = 2f;
+            painter2D.lineWidth = _lineWidth;
             painter2D.strokeColor = Color.white;
 
             var points = _getPoints();
@@ -42,13 +42,16 @@ namespace Atomix.ChartBuilder.VisualElements
             if (points.GetLength(1) != 2)
                 throw new Exception($"Scatter2D requires only 2 column matrix");
 
-            MathHelpers.ColumnMinMax(points, 0, out x_min, out x_max);
-            MathHelpers.ColumnMinMax(points, 1, out y_min, out y_max);
+            MathHelpers.ColumnMinMax(points, 0, out var range_x);
+            MathHelpers.ColumnMinMax(points, 1, out var range_y);
+
+            dynamic_range_x = range_x;
+            dynamic_range_y = range_y;
 
             for (int i = 0; i < points.GetLength(0); ++i)
             {
-                var relative_position_x = MathHelpers.Lerp(points[i, 0], x_min, x_max);
-                var relative_position_y = 1 - MathHelpers.Lerp(points[i, 1], y_min, y_max);
+                var relative_position_x = MathHelpers.Lerp(points[i, 0], dynamic_range_x.x, dynamic_range_x.y);
+                var relative_position_y = MathHelpers.Lerp(points[i, 1], dynamic_range_y.x, dynamic_range_y.y);
 
                 painter2D.BeginPath();
                 painter2D.Arc(Plot(relative_position_x, relative_position_y), _dotRadius, 0, 360);

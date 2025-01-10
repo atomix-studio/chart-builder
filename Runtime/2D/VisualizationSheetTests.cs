@@ -1,6 +1,7 @@
 ﻿using Atomix.ChartBuilder.Math;
 using System;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace Atomix.ChartBuilder
 {
@@ -32,9 +33,10 @@ namespace Atomix.ChartBuilder
 
             // on ajoute un graphe qui contient seulement les axis
             var axis = _visualizationSheet.AddAxis("a1", new Color(0, 0, 0, 0), new Vector2Int(100, 100), parent);
+            axis.backgroundColor = new Color(.9f, .9f, .9f, 1);
 
             var lineGraph = _visualizationSheet.Add_SimpleLine(points, 3, new Vector2Int(100, 100), axis);
-
+            lineGraph.backgroundColor = new Color(0, 0, 0, 0);
             // permet d s'afficher par dessus les AXIS
             //lineGraph.backgroundColor = new Color(1, 1, 0, 1);
             lineGraph.SetPadding(10, 10, 10, 10);
@@ -74,7 +76,7 @@ namespace Atomix.ChartBuilder
             _visualizationSheet.Add_SimpleLine(points, 2, new Vector2Int(500, 500), null);
         }
 
-        private void Test_Scatter(int pCount = 100, int X = 50, int Y = 500)
+        private void Test_Scatter(int pCount = 100, int X = 50, int Y = 50)
         {
             _visualizationSheet.Awake();
 
@@ -86,8 +88,39 @@ namespace Atomix.ChartBuilder
                 points[i, 1] = RandomHelpers.Shared.Range(-Y, Y);
             }
 
-            var scatter = _visualizationSheet.Add_Scatter(points, new Vector2Int(300, 300));
-            scatter.SetPadding(10, 10, 10, 10);
+            var parent = _visualizationSheet.AddContainer("c0", Color.black, new Vector2Int(500, 500));
+            parent.SetPadding(5, 5, 5, 5);
+            var scatter = _visualizationSheet.Add_Scatter(points, new Vector2Int(100, 100), parent);
+            parent.SetTitle("Scatter Graph");
+            scatter.SetPadding(25, 25, 25, 25);
+            scatter.gridDelta = new Vector2Double(X * 2 / 10, X * 2 / 10);
+            scatter.gridColor = new Color(.9f, .9f, .9f, 1);
+            scatter.DrawAutomaticGrid();
+        }
+
+        private void Test_Texts()
+        {
+            var doc = GetComponent<UIDocument>();
+
+            var root = doc.rootVisualElement;
+            root.Clear();
+            doc.panelSettings.targetTexture.Release();
+            doc.panelSettings.targetTexture.Create();
+
+            // Create the label
+            var label = new Label("Hello, World!");
+            label.style.position = Position.Absolute; // Use absolute positioning
+            label.style.top = 0; // Align to the top
+            label.style.left = new StyleLength(50);  // Add bas
+            label.style.color = Color.white;
+
+            /*
+                        var parent = _visualizationSheet.AddContainer("c0", Color.white, new Vector2Int(500, 500));
+                        parent.SetPadding(10, 10, 10, 10);
+                        parent.SetTitle("Scatter Graph");*/
+
+            root.Add(label);
+            root.MarkDirtyRepaint();
         }
 
         private void OnGUI()
@@ -110,6 +143,11 @@ namespace Atomix.ChartBuilder
             if (GUILayout.Button("4"))
             {
                 Test_Scatter();
+            }
+            
+            if (GUILayout.Button("5"))
+            {
+                Test_Texts();
             }
         }
     }

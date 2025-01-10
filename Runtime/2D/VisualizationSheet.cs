@@ -57,12 +57,12 @@ namespace Atomix.ChartBuilder
 
             parent.style.backgroundColor = backgroundColor;
 
-            _root.Add(parent);
+            AddChart(parent, container);
 
             return parent;
         }
 
-        public T AddChart<T>(T chart, VisualElement container) where T : ChartBaseElement
+        public T AddChart<T>(T chart, VisualElement container) where T : ChartBuilderElement
         {
             if (container == null)
                 _root.Add(chart);
@@ -127,6 +127,5 @@ namespace Atomix.ChartBuilder
             chart.SetDimensions(container != null ? LengthUnit.Percent : LengthUnit.Pixel, dimensions.x, dimensions.y);
             return AddChart(chart, container);
         }
-        
     }
 }

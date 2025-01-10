@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEngine;
 
-namespace Atomix.ChartBuilder.Math 
-{ 
+namespace Atomix.ChartBuilder.Math
+{
     public static class MathHelpers
-    {      
+    {
         public static double Lerp(double value, double v_min, double v_max)
         {
             return Map(value, v_min, v_max, 0, 1);
@@ -20,7 +21,7 @@ namespace Atomix.ChartBuilder.Math
             max = double.MinValue;
             min = double.MaxValue;
 
-            for(int i = 0; i < matrix.GetLength(0); ++i)
+            for (int i = 0; i < matrix.GetLength(0); ++i)
             {
                 max = System.Math.Max(matrix[i, columnIndex], max);
                 min = System.Math.Min(matrix[i, columnIndex], min);
@@ -48,6 +49,39 @@ namespace Atomix.ChartBuilder.Math
             {
                 max = System.Math.Max(vector[i], max);
                 min = System.Math.Min(vector[i], min);
+            }
+        }
+
+        public static void ColumnMinMax(double[,] matrix, int columnIndex, out Vector2Double minMax)
+        {
+            minMax = new Vector2Double(double.MaxValue, double.MinValue);
+
+            for (int i = 0; i < matrix.GetLength(0); ++i)
+            {
+                minMax.x = System.Math.Min(matrix[i, columnIndex], minMax.x);
+                minMax.y = System.Math.Max(matrix[i, columnIndex], minMax.y);
+            }
+        }
+
+        public static void ColumnMinMax(List<double> vector, out Vector2Double minMax)
+        {
+            minMax = new Vector2Double(double.MaxValue, double.MinValue);
+
+            for (int i = 0; i < vector.Count; ++i)
+            {
+                minMax.y = System.Math.Max(vector[i], minMax.y);
+                minMax.x = System.Math.Min(vector[i], minMax.x);
+            }
+        }
+
+        public static void ColumnMinMax(double[] vector, out Vector2Double minMax)
+        {
+            minMax = new Vector2Double(double.MaxValue, double.MinValue);
+
+            for (int i = 0; i < vector.Length; ++i)
+            {
+                minMax.y = System.Math.Max(vector[i], minMax.y);
+                minMax.x = System.Math.Min(vector[i], minMax.x);
             }
         }
     }

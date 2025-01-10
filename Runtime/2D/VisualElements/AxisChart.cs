@@ -15,6 +15,9 @@ namespace Atomix.ChartBuilder.VisualElements
             generateVisualContent += DrawOrthonormalLines_BottomLeftAnchored;
         }
 
+        public override Vector2Double dynamic_range_y { get; set; }
+        public override Vector2Double dynamic_range_x { get; set; }
+
         public AxisChart SetLineWidth(float lineWidth)
         {
             _lineWidth = lineWidth;

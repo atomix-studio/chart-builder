@@ -1,9 +1,7 @@
 {
     "name": "Atomix.ChartBuilder",
     "rootNamespace": "",
-    "references": [
-        ""
-    ],
+    "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
