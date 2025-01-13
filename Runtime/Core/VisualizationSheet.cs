@@ -40,6 +40,7 @@ namespace Atomix.ChartBuilder
             _root.Clear();
         }
 
+        
         /// <summary>
         /// Ajoute un parent vide, avec une dimension en pixels
         /// </summary>

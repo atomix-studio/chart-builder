@@ -58,7 +58,7 @@ namespace Atomix.ChartBuilder
 
             var line = _visualizationSheet.Add_SimpleLine(points, 2, new Vector2Int(100, 100), parent);
 
-            line.DrawBottomLeftGraduation();
+            line.DrawAxis();
         }
 
         private void Test_SimpleLine3()
@@ -91,10 +91,14 @@ namespace Atomix.ChartBuilder
             var parent = _visualizationSheet.AddContainer("c0", Color.black, new Vector2Int(750, 750));
             parent.SetPadding(5, 5, 5, 5);
             var scatter = _visualizationSheet.Add_Scatter(points, new Vector2Int(100, 100), parent);
-            scatter.SetPadding(25, 25, 25, 25);
+            scatter.SetPadding(50, 50, 50, 50);
+            scatter.SetFont(_font);
+            scatter.backgroundColor = Color.white;
             scatter.gridDelta = new Vector2Double(X * 2 / 20, X * 2 / 20);
-            scatter.gridColor = new Color(.9f, .9f, .9f, 1);
-            scatter.DrawAutomaticGrid();
+            scatter.gridColor = new Color(.9f, .9f, .9f, .5f);
+
+            scatter.DrawAutomaticGrid(12, "Densité des X", "Densité des Y");
+
             parent.SetTitle("Scatter Graph", _font);
         }
 

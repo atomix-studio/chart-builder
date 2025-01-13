@@ -10,6 +10,8 @@ namespace Atomix.ChartBuilder.VisualElements
 {
     public class ChartBuilderElement : VisualElement
     {
+        #region Padding & Margin
+
         private double _paddingRight = int.MinValue;
         private double _paddingBottom = int.MinValue;
         private double _paddingLeft = int.MinValue;
@@ -73,7 +75,55 @@ namespace Atomix.ChartBuilder.VisualElements
         protected double real_heigth => height - paddingTop - paddingBottom;
 
 
-        #region Initialization
+        public void SetMargin(int l, int r, int b, int t)
+        {
+            style.marginLeft = l;
+            style.marginTop = t;
+            style.marginRight = r;
+            style.marginBottom = b;
+        }
+
+        public void SetPadding(int l, int r, int b, int t)
+        {
+            style.paddingLeft = l;
+            style.paddingTop = t;
+            style.paddingRight = r;
+            style.paddingBottom = b;
+        }
+
+        #endregion
+
+        #region Font & Text
+
+        private Font _font;
+        protected Font font => _font;
+
+
+        public void SetFont(Font font)
+        {
+            _font = font;
+        }
+
+
+        public virtual void SetTitle(string title, Font font, float size = 14, float topOffset = 10)
+        {
+            var label = new Label(title);
+            label.style.position = Position.Absolute;
+            label.style.fontSize = size;
+            label.style.unityFont = font;
+            //label.style.width = parent.resolvedStyle.width;
+            label.style.top = topOffset;
+            //label.style.left = 0; // Center horizontally
+            label.style.alignSelf = Align.Center;  // Centers the label inside its container (vertically and horizontally)
+            label.style.unityTextAlign = new StyleEnum<TextAnchor>(TextAnchor.UpperCenter);
+            this.Add(label);
+
+            MarkDirtyRepaint();
+        }
+
+        #endregion
+
+        #region  Position & Dimension
 
         public ChartBuilderElement SetDimensions(LengthUnit lengthUnit, int width, int height)
         {
@@ -95,39 +145,7 @@ namespace Atomix.ChartBuilder.VisualElements
             return this;
         }
 
-        public void SetMargin(int l, int r, int b, int t)
-        {
-            style.marginLeft = l;
-            style.marginTop = t;
-            style.marginRight = r;
-            style.marginBottom = b;
-        }
-
-        public void SetPadding(int l, int r, int b, int t)
-        {
-            style.paddingLeft = l;
-            style.paddingTop = t;
-            style.paddingRight = r;
-            style.paddingBottom = b;
-        }
-
-        public virtual void SetTitle(string title, Font font, float size = 14, float topOffset = 10)
-        {
-            var label = new Label(title);
-            label.style.position = Position.Absolute;
-            label.style.fontSize = size;
-            label.style.unityFont = font;
-            //label.style.width = parent.resolvedStyle.width;
-            label.style.top = topOffset; 
-            //label.style.left = 0; // Center horizontally
-            label.style.alignSelf = Align.Center;  // Centers the label inside its container (vertically and horizontally)
-            label.style.unityTextAlign = new StyleEnum<TextAnchor>(TextAnchor.UpperCenter);
-            this.Add(label);
-            MarkDirtyRepaint();
-        }
-
         #endregion
-
 
 
         public void Refresh()

@@ -27,7 +27,7 @@ namespace Atomix.ChartBuilder.VisualElements
 
             backgroundColor = _backgroundColor;
             generateVisualContent += GenerateGradientColoredScatter;
-            generateVisualContent += DrawOrthonormalLines_BottomLeftAnchored;
+            generateVisualContent += DrawAxisCallback;
         }
 
         protected void GenerateGradientColoredScatter(MeshGenerationContext ctx)

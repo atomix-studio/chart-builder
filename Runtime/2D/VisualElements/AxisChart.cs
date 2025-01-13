@@ -12,7 +12,7 @@ namespace Atomix.ChartBuilder.VisualElements
     {
         public AxisChart()
         {
-            generateVisualContent += DrawOrthonormalLines_BottomLeftAnchored;
+            generateVisualContent += DrawAxisCallback;
         }
 
         public override Vector2Double dynamic_range_y { get; set; }
