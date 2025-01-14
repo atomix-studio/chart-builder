@@ -1,6 +1,6 @@
 {
   "name": "com.atomixstudio.chart-builder",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "displayName": "Chart Builder",
   "description": "Unity UI Toolkit library for creating charts",
   "unity": "6000.0",
