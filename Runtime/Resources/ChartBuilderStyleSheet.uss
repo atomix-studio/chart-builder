@@ -1,0 +1,21 @@
+.title-text {
+    font-size: 18px;
+    color: black;
+    -unity-font: url("project://database/Assets/chart-builder/Runtime/Resources/Mathics Round Free.ttf");
+}
+
+.subtile-text {
+    color: black;
+    font-size: 14px;
+    -unity-font: url("project://database/Assets/chart-builder/Runtime/Resources/Mathics Round Free.ttf");
+}
+
+.normal-text {
+    color: black;
+    font-size: 12px;
+    -unity-font: url("project://database/Assets/chart-builder/Runtime/Resources/Mathics Round Free.ttf");
+}
+
+.chart-builder-default-front {
+  -unity-font-definition: url("project://database/Assets/chart-builder/Runtime/Resources/Mathics Round Free SDF.asset");
+}

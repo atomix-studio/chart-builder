@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Atomix.ChartBuilder.Settings;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -96,7 +97,13 @@ namespace Atomix.ChartBuilder.VisualElements
         #region Font & Text
 
         private Font _font;
-        protected Font font => _font;
+        protected Font font
+        {
+            get
+            {
+                return _font;
+            }
+        }
 
 
         public void SetFont(Font font)
@@ -104,18 +111,24 @@ namespace Atomix.ChartBuilder.VisualElements
             _font = font;
         }
 
-
-        public virtual void SetTitle(string title, Font font, float size = 14, float topOffset = 10)
+        public virtual void SetTitle(string title, Font font, float fontSize = -1, float topOffset = 10)
         {
             var label = new Label(title);
+
+            if (fontSize > 0)
+                label.style.fontSize = fontSize;
+
             label.style.position = Position.Absolute;
-            label.style.fontSize = size;
-            label.style.unityFont = font;
+            //label.style.unityFont = font == null ? this.font : font;
             //label.style.width = parent.resolvedStyle.width;
             label.style.top = topOffset;
             //label.style.left = 0; // Center horizontally
             label.style.alignSelf = Align.Center;  // Centers the label inside its container (vertically and horizontally)
             label.style.unityTextAlign = new StyleEnum<TextAnchor>(TextAnchor.UpperCenter);
+
+            //label.style.unityFont = font;
+            label.AddToClassList("title-text");
+
             this.Add(label);
 
             MarkDirtyRepaint();

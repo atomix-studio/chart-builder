@@ -63,7 +63,7 @@ namespace Atomix.ChartBuilder.VisualElements
 
             label.style.position = Position.Absolute;
             label.style.fontSize = fontSize;
-            label.style.unityFont = font;
+            //label.style.unityFont = font;
 
             var positions = Plot(normalizedPosition.x, normalizedPosition.y);
 
