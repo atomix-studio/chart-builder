@@ -75,6 +75,8 @@ namespace Atomix.ChartBuilder.VisualElements
             if (rotation != 0)
                 label.transform.rotation *= Quaternion.Euler(0, 0, rotation);
 
+            label.AddToClassList("normal-text");
+
             this.Add(label);
 
             return label;
@@ -103,6 +105,25 @@ namespace Atomix.ChartBuilder.VisualElements
             Refresh();
         }
 
+        public int grid_points_x
+        {
+            get
+            {
+                var delta_x = dynamic_range_x.y - dynamic_range_x.x;
+                int points_x = (int)(delta_x / gridDelta.x);
+                return points_x;
+            }
+        }
+
+        public int grid_points_y
+        {
+            get
+            {
+                var delta_y = dynamic_range_y.y - dynamic_range_y.x;
+                int points_y = (int)(delta_y / gridDelta.y);
+                return points_y;
+            }
+        }
         public void DrawAutomaticGrid(int fontSize = 12, string x_axis_title = "x", string y_axis_title = "y", float graphLineWidth = 2f)
         {
             _gridLineWidth = graphLineWidth;
@@ -113,14 +134,11 @@ namespace Atomix.ChartBuilder.VisualElements
             {
                 Debug.Log(width);
 
-                var delta_x = dynamic_range_x.y - dynamic_range_x.x;
-                var delta_y = dynamic_range_y.y - dynamic_range_y.x;
-
-                int points_x = (int)(delta_x / gridDelta.x);
-                int points_y = (int)(delta_y / gridDelta.y);
+                int points_x = grid_points_x;
+                int points_y = grid_points_y;
 
                 // texte absisse
-                for (int j = 0; j <= points_x; ++j)
+                for (int j = 0; j <= grid_points_x; ++j)
                 {
                     var x = (float)j / (float)points_x;
                     var text = (dynamic_range_x.x + j * gridDelta.x).ToString();
@@ -131,7 +149,7 @@ namespace Atomix.ChartBuilder.VisualElements
                 }
 
                 // texte ordonées
-                for (int j = 0; j <= points_y; ++j)
+                for (int j = 0; j <= grid_points_y; ++j)
                 {
                     var x = (float)j / (float)points_y;
                     var text = (dynamic_range_y.x + j * gridDelta.y).ToString();

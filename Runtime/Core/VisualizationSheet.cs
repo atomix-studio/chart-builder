@@ -57,7 +57,6 @@ namespace Atomix.ChartBuilder
             parent.SetDimensions(container != null ? LengthUnit.Percent : LengthUnit.Pixel, dimensions.x, dimensions.y);
 
             parent.style.backgroundColor = backgroundColor;
-            parent.styleSheets.Add(_document.panelSettings.themeStyleSheet);    
             Debug.Log(parent.styleSheets.count);
 
             AddChart(parent, container);
@@ -70,6 +69,8 @@ namespace Atomix.ChartBuilder
             if (container == null)
                 _root.Add(chart);
             else container.Add(chart);
+
+            chart.styleSheets.Add(_document.panelSettings.themeStyleSheet);
 
             chart.Refresh();
             return chart;

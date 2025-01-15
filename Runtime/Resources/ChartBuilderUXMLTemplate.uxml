@@ -1,9 +1,23 @@
 <engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
-    <Style src="project://database/Assets/test.uss?fileID=7433441132597879392&amp;guid=92c1f612fc08ecb4482a827a178d9ce0&amp;type=3#test" />
-    <engine:Label text="Label" />
-    <engine:VisualElement style="flex-grow: 1; flex-wrap: nowrap; align-items: flex-start; flex-direction: column; justify-content: flex-start; align-content: auto; width: 100%;">
-        <engine:Label text="Label" class="c" style="flex-direction: row; align-items: flex-start; justify-content: flex-start; align-self: flex-start; position: absolute; left: 46px; transform-origin: left top; width: 247px; flex-wrap: nowrap; margin-top: 3px; margin-right: 3px; margin-bottom: 3px; margin-left: 3px; visibility: visible; overflow: visible; top: 6px;" />
-        <engine:Button text="Button" style="transform-origin: center; translate: 0 0;" />
-        <engine:Button text="Button" />
+    <engine:VisualElement style="flex-grow: 1; flex-wrap: nowrap; align-items: flex-start; flex-direction: column; justify-content: flex-start; align-content: flex-end; width: 100%; position: relative; top: 0; left: 0; right: 0; bottom: 0; height: 100%;">
+        <engine:VisualElement style="flex-grow: 1; align-items: auto; flex-direction: row; flex-wrap: wrap-reverse; align-self: flex-end; align-content: stretch; width: 101%; height: 25px; -unity-text-align: upper-left; justify-content: space-evenly; max-height: none; bottom: 0; position: absolute;">
+            <engine:Label text="Label" name="Label" style="width: 150px; flex-shrink: 0; min-width: 0; max-width: 60px;" />
+            <engine:Label text="Label" name="Label" style="width: 150px; flex-shrink: 100; min-width: 0; max-width: 60px;" />
+            <engine:Label text="Label" name="Label" style="width: 150px; flex-shrink: 0; min-width: 20px; max-width: 60px;" />
+            <engine:Label text="Label" name="Label" style="width: 150px; flex-shrink: 0; min-width: 0; max-width: 60px;" />
+            <engine:Label text="Label" name="Label" style="width: 150px; flex-shrink: 0; min-width: 0; max-width: 60px;" />
+            <engine:Label text="Label" name="Label" style="width: 150px; flex-shrink: 0; min-width: 0; max-width: 60px;" />
+            <engine:Label text="Label" name="Label" style="width: 150px; flex-shrink: 0; min-width: 0; max-width: 60px;" />
+        </engine:VisualElement>
+        <engine:VisualElement style="flex-grow: 1; position: absolute; top: 0; bottom: 0; left: 0; right: 0; width: 25px; justify-content: space-evenly;">
+            <engine:Label text="Label" />
+            <engine:Label text="Label" />
+            <engine:Label text="Label" />
+            <engine:Label text="Label" />
+            <engine:Label text="Label" />
+            <engine:Label text="Label" />
+            <engine:Label text="Label" />
+            <engine:Label text="Label" />
+        </engine:VisualElement>
     </engine:VisualElement>
 </engine:UXML>
