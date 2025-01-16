@@ -1,5 +1,7 @@
 ﻿using Atomix.ChartBuilder.Math;
+using Atomix.ChartBuilder.VisualElements;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -92,53 +94,116 @@ namespace Atomix.ChartBuilder
             parent.SetPadding(5, 5, 5, 5);
             var scatter = _visualizationSheet.Add_Scatter(points, new Vector2Int(100, 100), parent);
             scatter.SetPadding(50, 50, 50, 50);
-            scatter.SetFont(_font);
             scatter.backgroundColor = Color.white;
-            scatter.gridDelta = new Vector2Double(X * 2 / 20, X * 2 / 20);
+            scatter.gridSize = new Vector2Double(X * 2 / 20, X * 2 / 20);
+            scatter.gridSizeMode = VisualElements.ChartBaseElement.GridModes.FixedDeltaValue;
+
             scatter.gridColor = new Color(.9f, .9f, .9f, .5f);
 
             scatter.DrawAutomaticGrid(12, "Densité des X", "Densité des Y");
 
-            parent.SetTitle("Scatter Graph", _font);
+            parent.SetTitle("Scatter Graph");
         }
 
-        [SerializeField] private Font _font;
-        private void Test_Texts()
+        private void Test_ScatterFixedGrid(int pCount = 100, int X = 100, int Y = 100)
         {
             _visualizationSheet.Awake();
 
-            var parent = _visualizationSheet.AddContainer("c0", Color.white, new Vector2Int(500, 500));
+            var points = new double[pCount, 2];
+
+            for (int i = 0; i < pCount; ++i)
+            {
+                points[i, 0] = RandomHelpers.Shared.Range(-X, X);
+                points[i, 1] = RandomHelpers.Shared.Range(-Y, Y);
+            }
+
+            var parent = _visualizationSheet.AddContainer("c0", Color.black, new Vector2Int(750, 750));
             parent.SetPadding(5, 5, 5, 5);
-            parent.SetTitle("Hello, World!", _font);
-            parent.Refresh();
+            var scatter = _visualizationSheet.Add_Scatter(points, new Vector2Int(100, 100), parent);
+            scatter.SetPadding(50, 50, 50, 50);
+            scatter.backgroundColor = Color.white;
+            scatter.gridSize = new Vector2Double(6, 6);
+            scatter.gridSizeMode = ChartBaseElement.GridModes.FixedPointsCount;
+
+            scatter.gridColor = new Color(.9f, .9f, .9f, .5f);
+
+            scatter.DrawAutomaticGrid(12, "Densité des X", "Densité des Y");
+
+            parent.SetTitle("Scatter Graph");
+        }
+
+        private void Test_ScatterFixedGrid_Classes(int pCount = 100, int X = 100, int Y = 100)
+        {
+            _visualizationSheet.Awake();
+
+            var dict = new Dictionary<Color, double[,]>();
+
+            for (int j = 0; j < 3; ++j)
+            {
+                var points = new double[pCount / 3, 2];
+
+                dict.Add(
+                    new Color((float)RandomHelpers.Shared.Range(0.0, 1.0), (float)RandomHelpers.Shared.Range(0.0, 1.0), (float)RandomHelpers.Shared.Range(0.0, 1.0), 1),
+                    points);
+
+                for (int i = 0; i < pCount / 3; ++i)
+                {
+
+                    points[i, 0] = RandomHelpers.Shared.Range(-X, X);
+                    points[i, 1] = RandomHelpers.Shared.Range(-Y, Y);
+                }
+            }
+
+            var root = _visualizationSheet.AddPixelSizedContainer("root", new Vector2Int(800, 800), null);
+            root.style.alignSelf = Align.Center;
+
+            var parent = _visualizationSheet.AddContainer("c0", Color.black, new Vector2Int(100, 100), root);
+            parent.SetPadding(5, 5, 5, 5);
+            var scatter = _visualizationSheet.Add_Scatter(dict, new Vector2Int(100, 100), parent);
+            scatter.SetPadding(50, 50, 50, 50);
+            scatter.backgroundColor = Color.white;
+            scatter.gridSize = new Vector2Double(6, 6);
+            scatter.gridSizeMode = ChartBaseElement.GridModes.FixedPointsCount;
+
+            scatter.gridColor = new Color(.9f, .9f, .9f, .5f);
+
+            scatter.DrawAutomaticGrid(12, "Densité des X", "Densité des Y");
+
+            parent.SetTitle("Scatter Graph");
         }
 
         private void OnGUI()
         {
-            if (GUILayout.Button("1"))
+            if (GUILayout.Button(nameof(Test_SimpleLine)))
             {
                 Test_SimpleLine();
             }
 
-            if (GUILayout.Button("2"))
+            if (GUILayout.Button(nameof(Test_SimpleLine2)))
             {
                 Test_SimpleLine2();
             }
 
-            if (GUILayout.Button("3"))
+            if (GUILayout.Button(nameof(Test_SimpleLine3)))
             {
                 Test_SimpleLine3();
             }
 
-            if (GUILayout.Button("4"))
+            if (GUILayout.Button(nameof(Test_Scatter)))
             {
                 Test_Scatter();
             }
-            
-            if (GUILayout.Button("5"))
+
+            if (GUILayout.Button(nameof(Test_ScatterFixedGrid)))
             {
-                Test_Texts();
+                Test_ScatterFixedGrid();
             }
+
+            if (GUILayout.Button(nameof(Test_ScatterFixedGrid_Classes)))
+            {
+                Test_ScatterFixedGrid_Classes();
+            }
+
         }
     }
 }

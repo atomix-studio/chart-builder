@@ -70,10 +70,10 @@ namespace Atomix.ChartBuilder.VisualElements
             }
         }
 
-        protected double width => resolvedStyle.width;
-        protected double height => resolvedStyle.height;
-        protected double real_width => width - paddingLeft - paddingRight;
-        protected double real_heigth => height - paddingTop - paddingBottom;
+        protected double resolved_width => resolvedStyle.width;
+        protected double resolved_height => resolvedStyle.height;
+        protected double real_width => resolved_width - paddingLeft - paddingRight;
+        protected double real_heigth => resolved_height - paddingTop - paddingBottom;
 
 
         public void SetMargin(int l, int r, int b, int t)
@@ -96,22 +96,7 @@ namespace Atomix.ChartBuilder.VisualElements
 
         #region Font & Text
 
-        private Font _font;
-        protected Font font
-        {
-            get
-            {
-                return _font;
-            }
-        }
-
-
-        public void SetFont(Font font)
-        {
-            _font = font;
-        }
-
-        public virtual void SetTitle(string title, Font font, float fontSize = -1, float topOffset = 10)
+        public virtual void SetTitle(string title, float fontSize = -1, float topOffset = 10)
         {
             var label = new Label(title);
 
@@ -119,14 +104,10 @@ namespace Atomix.ChartBuilder.VisualElements
                 label.style.fontSize = fontSize;
 
             label.style.position = Position.Absolute;
-            //label.style.unityFont = font == null ? this.font : font;
-            //label.style.width = parent.resolvedStyle.width;
             label.style.top = topOffset;
-            //label.style.left = 0; // Center horizontally
             label.style.alignSelf = Align.Center;  // Centers the label inside its container (vertically and horizontally)
             label.style.unityTextAlign = new StyleEnum<TextAnchor>(TextAnchor.UpperCenter);
 
-            //label.style.unityFont = font;
             label.AddToClassList("title-text");
 
             this.Add(label);

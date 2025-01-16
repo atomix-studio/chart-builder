@@ -1,8 +1,8 @@
 <engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <engine:VisualElement style="flex-grow: 1; flex-wrap: nowrap; align-items: flex-start; flex-direction: column; justify-content: flex-start; align-content: flex-end; width: 100%; position: relative; top: 0; left: 0; right: 0; bottom: 0; height: 100%;">
-        <engine:VisualElement style="flex-grow: 1; align-items: auto; flex-direction: row; flex-wrap: wrap-reverse; align-self: flex-end; align-content: stretch; width: 101%; height: 25px; -unity-text-align: upper-left; justify-content: space-evenly; max-height: none; bottom: 0; position: absolute;">
+        <engine:VisualElement style="flex-grow: 1; align-items: auto; flex-direction: row; flex-wrap: wrap-reverse; align-self: center; align-content: stretch; width: 101%; height: 25px; -unity-text-align: upper-left; justify-content: space-evenly; max-height: none; bottom: 0; position: absolute; translate: 0 0;">
             <engine:Label text="Label" name="Label" style="width: 150px; flex-shrink: 0; min-width: 0; max-width: 60px;" />
-            <engine:Label text="Label" name="Label" style="width: 150px; flex-shrink: 100; min-width: 0; max-width: 60px;" />
+            <engine:Label text="Label" name="Label" class="text-align" style="width: 150px; flex-shrink: 100; min-width: 0; max-width: 60px; align-items: stretch; -unity-text-align: upper-center;" />
             <engine:Label text="Label" name="Label" style="width: 150px; flex-shrink: 0; min-width: 20px; max-width: 60px;" />
             <engine:Label text="Label" name="Label" style="width: 150px; flex-shrink: 0; min-width: 0; max-width: 60px;" />
             <engine:Label text="Label" name="Label" style="width: 150px; flex-shrink: 0; min-width: 0; max-width: 60px;" />

@@ -15,7 +15,7 @@ namespace Atomix.ChartBuilder.VisualElements
             generateVisualContent += DrawAxisCallback;
         }
 
-        public override Vector2Double dynamic_range_y { get; set; }
-        public override Vector2Double dynamic_range_x { get; set; }
+        public override Vector2Double current_range_y { get; set; }
+        public override Vector2Double current_range_x { get; set; }
     }
 }

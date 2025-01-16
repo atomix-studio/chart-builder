@@ -33,14 +33,30 @@ namespace Atomix.ChartBuilder
                 _document = GetComponent<UIDocument>();
 
             _root = _document.rootVisualElement;
-            _document.panelSettings.targetTexture.Release();
-            _document.panelSettings.targetTexture.Create();
+
+            if(_document.panelSettings.targetTexture != null)
+            {
+                _document.panelSettings.targetTexture.Release();
+                _document.panelSettings.targetTexture.Create();
+            }
 
             _root.Children().ToList().ForEach(t => t.Clear());
             _root.Clear();
         }
 
-        
+        public ChartBuilderElement AddPixelSizedContainer(string name, Vector2Int dimensions, VisualElement container = null)
+        {
+            var parent = new ChartBuilderElement();
+            parent.name = name;
+            parent.SetRelativePosition();
+            parent.SetDimensions(LengthUnit.Pixel, dimensions.x, dimensions.y);
+
+            AddChart(parent, container);
+
+            return parent;
+        }
+
+
         /// <summary>
         /// Ajoute un parent vide, avec une dimension en pixels
         /// </summary>
@@ -57,7 +73,6 @@ namespace Atomix.ChartBuilder
             parent.SetDimensions(container != null ? LengthUnit.Percent : LengthUnit.Pixel, dimensions.x, dimensions.y);
 
             parent.style.backgroundColor = backgroundColor;
-            Debug.Log(parent.styleSheets.count);
 
             AddChart(parent, container);
 
@@ -128,6 +143,13 @@ namespace Atomix.ChartBuilder
         public Scatter2DChart Add_Scatter(double[,] matrice, Vector2Int dimensions, VisualElement container = null)
         {
             var chart = new Scatter2DChart(() => matrice);
+            chart.SetDimensions(container != null ? LengthUnit.Percent : LengthUnit.Pixel, dimensions.x, dimensions.y);
+            return AddChart(chart, container);
+        }
+
+        public Scatter2DChart Add_Scatter(Dictionary<Color, double[,]> classedPoints, Vector2Int dimensions, VisualElement container = null)
+        {
+            var chart = new Scatter2DChart(classedPoints);
             chart.SetDimensions(container != null ? LengthUnit.Percent : LengthUnit.Pixel, dimensions.x, dimensions.y);
             return AddChart(chart, container);
         }

@@ -25,6 +25,14 @@ namespace Atomix.ChartBuilder
             }
         }
 
+        public static Vector2Double one
+        {
+            get
+            {
+                return new Vector2Double(1, 1);
+            }
+        }
+
 
         // Overload for '=='
         public static bool operator ==(Vector2Double lhs, Vector2Double rhs)
@@ -86,6 +94,11 @@ namespace Atomix.ChartBuilder
         public override int GetHashCode()
         {
             return x.GetHashCode() ^ y.GetHashCode();
+        }
+
+        public override string ToString()
+        {
+            return $"({x}, {y})";
         }
     }
 }

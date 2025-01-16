@@ -21,8 +21,8 @@ namespace Atomix.ChartBuilder.VisualElements
         private Func<List<double>> _getYValuesDelegates;
         private Func<List<Vector2>> _getXYValuesDelegates;
 
-        public override Vector2Double dynamic_range_y { get ; set; }
-        public override Vector2Double dynamic_range_x { get ; set; }
+        public override Vector2Double current_range_y { get ; set; }
+        public override Vector2Double current_range_x { get ; set; }
 
         /// <summary>
         /// Unidimensional mode, the points will be placed by the maximum avalaible interval on X axis
@@ -72,19 +72,19 @@ namespace Atomix.ChartBuilder.VisualElements
 
             InitDynamicRangeY();
 
-            dynamic_range_x = new Vector2Double(0, _pointsY.Length);
+            current_range_x = new Vector2Double(0, _pointsY.Length);
 
             painter2D.BeginPath();
 
             var relative_position_x = 0.0;
-            var relative_position_y = MathHelpers.Lerp(_pointsY[0], dynamic_range_y.x, dynamic_range_y.y);
+            var relative_position_y = MathHelpers.Lerp(_pointsY[0], current_range_y.x, current_range_y.y);
 
             painter2D.MoveTo(Plot(relative_position_x, relative_position_y));
 
             for (int i = 0; i < _pointsY.Length; i++)
             {
-                relative_position_x = MathHelpers.Lerp(i, dynamic_range_x.x, dynamic_range_x.y);
-                relative_position_y = MathHelpers.Lerp(_pointsY[i], dynamic_range_y.x, dynamic_range_y.y);
+                relative_position_x = MathHelpers.Lerp(i, current_range_x.x, current_range_x.y);
+                relative_position_y = MathHelpers.Lerp(_pointsY[i], current_range_y.x, current_range_y.y);
 
                 painter2D.LineTo(Plot(relative_position_x, relative_position_y));
 
@@ -98,11 +98,11 @@ namespace Atomix.ChartBuilder.VisualElements
             if (fixed_range_y == Vector2Double.zero)
             {
                 MathHelpers.ColumnMinMax(_pointsY, out var range_y);
-                dynamic_range_y = range_y;
+                current_range_y = range_y;
             }
             else
             {
-                dynamic_range_y = fixed_range_y;
+                current_range_y = fixed_range_y;
             }
         }
 
@@ -121,19 +121,19 @@ namespace Atomix.ChartBuilder.VisualElements
 
             InitDynamicRangeY();
 
-            dynamic_range_x = new Vector2Double(0, points_y.Count);
+            current_range_x = new Vector2Double(0, points_y.Count);
 
             painter2D.BeginPath();
 
             var relative_position_x = 0.0;
-            var relative_position_y = MathHelpers.Lerp(_pointsY[0], dynamic_range_y.x, dynamic_range_y.y);
+            var relative_position_y = MathHelpers.Lerp(_pointsY[0], current_range_y.x, current_range_y.y);
 
             painter2D.MoveTo(Plot(relative_position_x, relative_position_y));
 
             for (int i = 0; i < points_y.Count; i++)
             {
-                relative_position_x = MathHelpers.Lerp(i, dynamic_range_x.x, dynamic_range_x.y);
-                relative_position_y = MathHelpers.Lerp(points_y[i], dynamic_range_y.x, dynamic_range_y.y);
+                relative_position_x = MathHelpers.Lerp(i, current_range_x.x, current_range_x.y);
+                relative_position_y = MathHelpers.Lerp(points_y[i], current_range_y.x, current_range_y.y);
 
                 painter2D.LineTo(Plot(relative_position_x, relative_position_y));
 
