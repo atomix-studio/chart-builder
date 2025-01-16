@@ -224,7 +224,7 @@ namespace Atomix.ChartBuilder.VisualElements
 
             for (int i = 0; i <= (int)this.gridSize.x; ++i)
             {
-                var label = new Label((current_range_x.x + i * gridDelta.x).ToString());
+                var label = new Label(System.Math.Round((current_range_x.x + i * gridDelta.x), 2).ToString());
                 label.style.position = Position.Relative;
                 label.style.width = new Length(x_label_width, LengthUnit.Pixel);
                 label.style.fontSize = fontSize;
@@ -257,7 +257,7 @@ namespace Atomix.ChartBuilder.VisualElements
 
             for (int i = 0; i <= grid_points_y; ++i)
             {
-                var label = new Label((current_range_y.x + (grid_points_y - i) * gridDelta.y).ToString());
+                var label = new Label(System.Math.Round((current_range_y.x + (grid_points_y - i) * gridDelta.y), 2).ToString());
                 label.style.position = Position.Relative;
                 label.style.height = new Length(y_label_width, LengthUnit.Pixel);
                 label.style.fontSize = fontSize;
