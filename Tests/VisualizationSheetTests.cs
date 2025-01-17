@@ -30,18 +30,15 @@ namespace Atomix.ChartBuilder
             var dimension = new Vector2Int(500, 500);
 
             // on crée une boite conteneur
-            var parent = _visualizationSheet.AddContainer("c1", Color.green, dimension);
+            var parent = _visualizationSheet.AddContainer("c1", Color.black, dimension);
             parent.SetPadding(10, 10, 10, 10);
 
-            // on ajoute un graphe qui contient seulement les axis
-            var axis = _visualizationSheet.AddAxis("a1", new Color(0, 0, 0, 0), new Vector2Int(100, 100), parent);
-            axis.backgroundColor = new Color(.9f, .9f, .9f, 1);
+            var lineGraph = _visualizationSheet.Add_SimpleLine(points, 2, new Vector2Int(100, 100), parent);
+            lineGraph.SetPadding(50, 50, 50, 50);
+            lineGraph.gridSize = new Vector2Double(10, 10);
+            lineGraph.gridSizeMode = ChartBaseElement.GridModes.FixedPointsCount;
+            lineGraph.DrawAutomaticGrid();
 
-            var lineGraph = _visualizationSheet.Add_SimpleLine(points, 3, new Vector2Int(100, 100), axis);
-            lineGraph.backgroundColor = new Color(0, 0, 0, 0);
-            // permet d s'afficher par dessus les AXIS
-            //lineGraph.backgroundColor = new Color(1, 1, 0, 1);
-            lineGraph.SetPadding(10, 10, 10, 10);
             lineGraph.Refresh();
         }
 
@@ -132,7 +129,7 @@ namespace Atomix.ChartBuilder
             parent.SetTitle("Scatter Graph");
         }
 
-        private void Test_ScatterFixedGrid_Classes(int pCount = 100, int X = 100, int Y = 100)
+        private void Test_ScatterFixedGrid_Classes(int pCount = 500, int X = 100, int Y = 100)
         {
             _visualizationSheet.Awake();
 
@@ -164,6 +161,45 @@ namespace Atomix.ChartBuilder
             scatter.backgroundColor = Color.white;
             scatter.gridSize = new Vector2Double(6, 6);
             scatter.gridSizeMode = ChartBaseElement.GridModes.FixedPointsCount;
+
+            scatter.gridColor = new Color(.9f, .9f, .9f, .5f);
+
+            scatter.DrawAutomaticGrid(12, "Densité des X", "Densité des Y");
+
+            parent.SetTitle("Scatter Graph");
+        }
+
+        private void Test_ScatterFixedDelta_Values(int pCount = 500, int X = 100, int Y = 100)
+        {
+            _visualizationSheet.Awake();
+
+            var dict = new Dictionary<double[,], double >();
+
+            for (int j = 0; j < 3; ++j)
+            {
+                var points = new double[pCount / 3, 2];
+
+                dict.Add(points,
+                    (float)RandomHelpers.Shared.Range(0, X * Y));
+
+                for (int i = 0; i < pCount / 3; ++i)
+                {
+
+                    points[i, 0] = RandomHelpers.Shared.Range(-X, X);
+                    points[i, 1] = RandomHelpers.Shared.Range(-Y, Y);
+                }
+            }
+
+            var root = _visualizationSheet.AddPixelSizedContainer("root", new Vector2Int(800, 800), null);
+            root.style.alignSelf = Align.Center;
+
+            var parent = _visualizationSheet.AddContainer("c0", Color.black, new Vector2Int(100, 100), root);
+            parent.SetPadding(5, 5, 5, 5);
+            var scatter = _visualizationSheet.Add_Scatter(dict, new Vector2Int(100, 100), parent);
+            scatter.SetPadding(50, 50, 50, 50);
+            scatter.backgroundColor = Color.white;
+            scatter.gridSize = new Vector2Double(6, 6);
+            scatter.gridSizeMode = ChartBaseElement.GridModes.FixedDeltaValue;
 
             scatter.gridColor = new Color(.9f, .9f, .9f, .5f);
 
@@ -204,6 +240,10 @@ namespace Atomix.ChartBuilder
                 Test_ScatterFixedGrid_Classes();
             }
 
+            if (GUILayout.Button(nameof(Test_ScatterFixedDelta_Values)))
+            {
+                Test_ScatterFixedDelta_Values();
+            }
         }
     }
 }

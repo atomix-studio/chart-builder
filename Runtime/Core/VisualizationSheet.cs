@@ -121,7 +121,7 @@ namespace Atomix.ChartBuilder
 
             return AddChart(chart, container);
         }
-
+/*
         public SimpleLineChart Add_SimpleLine(Func<List<Vector2>> getPoints, float lineWidth, Vector2Int dimensions, VisualElement container = null)
         {
             var chart = new SimpleLineChart(getPoints);
@@ -139,7 +139,7 @@ namespace Atomix.ChartBuilder
 
             return AddChart(chart, container);
         }
-
+*/
         public Scatter2DChart Add_Scatter(double[,] matrice, Vector2Int dimensions, VisualElement container = null)
         {
             var chart = new Scatter2DChart(() => matrice);
@@ -153,5 +153,13 @@ namespace Atomix.ChartBuilder
             chart.SetDimensions(container != null ? LengthUnit.Percent : LengthUnit.Pixel, dimensions.x, dimensions.y);
             return AddChart(chart, container);
         }
+
+        public Scatter2DChart Add_Scatter(Dictionary<double[,], double> valuePoints, Vector2Int dimensions, VisualElement container = null)
+        {
+            var chart = new Scatter2DChart(valuePoints);
+            chart.SetDimensions(container != null ? LengthUnit.Percent : LengthUnit.Pixel, dimensions.x, dimensions.y);
+            return AddChart(chart, container);
+        }
+
     }
 }
