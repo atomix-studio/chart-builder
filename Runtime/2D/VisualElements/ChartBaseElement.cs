@@ -130,7 +130,7 @@ namespace Atomix.ChartBuilder.VisualElements
 
                         return new Vector2Double(points_x, points_y);
                     case GridModes.FixedDeltaValue:
-                        return new Vector2Double((int)_gridSize.x, _gridSize.y);
+                        return new Vector2Double(_gridSize.x, _gridSize.y);
                 }
 
                 return Vector2Double.one;
