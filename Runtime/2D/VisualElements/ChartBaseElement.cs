@@ -123,10 +123,10 @@ namespace Atomix.ChartBuilder.VisualElements
                 {
                     case GridModes.FixedPointsCount:
                         var delta_x = current_range_x.y - current_range_x.x;
-                        int points_x = (int)(delta_x / _gridSize.x);
+                        double points_x = delta_x / _gridSize.x;
 
                         var delta_y = current_range_y.y - current_range_y.x;
-                        int points_y = (int)(delta_y / _gridSize.y);
+                        double points_y = delta_y / _gridSize.y;
 
                         return new Vector2Double(points_x, points_y);
                     case GridModes.FixedDeltaValue:
