@@ -18,9 +18,6 @@ namespace Atomix.ChartBuilder.VisualElements
 
         private Dictionary<Vector2, Vector2Double> _plottedPositions = new Dictionary<Vector2, Vector2Double>();
 
-        public override Vector2Double current_range_y { get; set; }
-        public override Vector2Double current_range_x { get; set; }
-
         /// <summary>
         /// Assuming a matrix of N-Rows and 2-Columns (X and Y value)
         /// </summary>
@@ -31,7 +28,7 @@ namespace Atomix.ChartBuilder.VisualElements
         {
             _getPoints = getPoints;
 
-            InitDynamicRange(_getPoints());
+            onRefresh += () => InitDynamicRange(_getPoints());
 
             backgroundColor = _backgroundColor;
             generateVisualContent += GenerateGradientColoredScatter;
@@ -47,7 +44,7 @@ namespace Atomix.ChartBuilder.VisualElements
         {
             _getPoints = () => points;
 
-            InitDynamicRange(_getPoints());
+            onRefresh += () => InitDynamicRange(_getPoints());
 
             backgroundColor = _backgroundColor;
             generateVisualContent += GenerateGradientColoredScatter;
@@ -63,7 +60,7 @@ namespace Atomix.ChartBuilder.VisualElements
         {
             _getClassPoints = () => classedPoints;
 
-            InitDynamicRange(classedPoints);
+            onRefresh += () => InitDynamicRange(classedPoints);
 
             backgroundColor = _backgroundColor;
             generateVisualContent += GenerateClassColoredScatter;
@@ -83,7 +80,7 @@ namespace Atomix.ChartBuilder.VisualElements
         {
             _getValuePoints = () => classedPoints;
 
-            InitDynamicRange(classedPoints);
+            onRefresh += () => InitDynamicRange(classedPoints);
 
             backgroundColor = _backgroundColor;
             generateVisualContent += GenerateValueDrivenGradientColoredScatter;
@@ -277,9 +274,6 @@ namespace Atomix.ChartBuilder.VisualElements
             /*if (current_range_x != Vector2Double.zero && current_range_y != Vector2Double.zero)
                 return;*/
 
-            current_range_x = fixed_range_x;
-            current_range_y = fixed_range_y;
-
             Vector2Double min_max_x = new Vector2Double(double.MaxValue, double.MinValue);
             Vector2Double min_max_y = new Vector2Double(double.MaxValue, double.MinValue);
 
@@ -312,9 +306,6 @@ namespace Atomix.ChartBuilder.VisualElements
            /* if (current_range_x != Vector2Double.zero && current_range_y != Vector2Double.zero)
                 return;*/
 
-            current_range_x = fixed_range_x;
-            current_range_y = fixed_range_y;
-
             Vector2Double min_max_x = new Vector2Double(double.MaxValue, double.MinValue);
             Vector2Double min_max_y = new Vector2Double(double.MaxValue, double.MinValue);
 
@@ -346,9 +337,6 @@ namespace Atomix.ChartBuilder.VisualElements
         {
             /*if (current_range_x != Vector2Double.zero && current_range_y != Vector2Double.zero)
                 return;*/
-
-            current_range_x = fixed_range_x;
-            current_range_y = fixed_range_y;
 
             if (fixed_range_x == Vector2Double.zero)
             {

@@ -13,7 +13,7 @@ namespace Atomix.ChartBuilder.VisualElements
     {
         protected float _lineWidth = 2;
         protected float _gridLineWidth = 2;
-        protected Vector2Double _gridSize = new Vector2Double(1, 1);
+        protected Vector2Int _gridSize = new Vector2Int(0, 0);
 
         protected Color _strokeColor = Color.black;
         protected Color _gridColor = new Color(.8f, .8f, .8f, 1f);
@@ -26,15 +26,126 @@ namespace Atomix.ChartBuilder.VisualElements
 
         public Color backgroundColor { get { return _backgroundColor; } set { _backgroundColor = value; style.backgroundColor = new StyleColor(_backgroundColor); } }
 
+        public Action onRefresh { get; set; }
+
         /// <summary>
         /// Valeur min-max en Y (toute valeur dépassant ce seuil sera hors du graphe)
         /// </summary>
         public Vector2Double fixed_range_y { get; set; }
         public Vector2Double fixed_range_x { get; set; }
 
-        public abstract Vector2Double current_range_y { get; set; }
-        public abstract Vector2Double current_range_x { get; set; }
+        private Vector2Double _current_range_x;
+        private Vector2Double _current_range_y;
 
+
+        public Vector2Double current_range_x
+        {
+            get
+            {
+                if (_current_range_x == Vector2Double.zero)
+                    return fixed_range_x;
+
+                return _current_range_x;
+            }
+            set
+            {
+                _current_range_x = ComputeEvenRange(value.x, value.y, (int)gridSize.x, out var interval_x);
+                gridDelta = new Vector2Double(interval_x, gridDelta.y);
+            }
+        }
+
+        public static List<double> ComputeReasonableTicks(double axisMin, double axisMax, int maxTicks = 15)
+        {
+            // Calculate default range
+            double axisRange = axisMax - axisMin;
+
+            // Start with a rough interval estimate
+            double roughInterval = axisRange / maxTicks;
+
+            // Snap interval to nearest 'nice' value (1, 0.5, 0.2, etc.)
+            double baseValue = System.Math.Pow(10, System.Math.Floor(System.Math.Log10(roughInterval)));
+            double[] niceIntervals = { 0.5, 1, 2, 5, 10, 25, 100 }; // Common intervals
+            double interval = baseValue;
+
+            foreach (var nice in niceIntervals)
+            {
+                double candidate = baseValue * nice;
+                if (candidate >= roughInterval)
+                {
+                    interval = candidate;
+                    break;
+                }
+            }
+
+            // Generate tick positions
+            double min_value = System.Math.Floor(axisMin / interval) * interval;
+            double max_value = System.Math.Ceiling(axisMax / interval) * interval;
+
+            List<double> ticks = new List<double>();
+            for (double tick = min_value; tick <= max_value; tick += interval)
+            {
+                ticks.Add(System.Math.Round(tick, 5)); // Round to avoid floating-point precision issues
+            }
+
+            return ticks;
+        }
+
+        public Vector2Double ComputeEvenRange(double axisMin, double axisMax, int maxGridSize, out double interval)
+        {
+            // Calculate default range
+            double axisRange = axisMax - axisMin;
+
+            // Start with a rough interval estimate
+            double roughInterval = axisRange / maxGridSize;
+
+            // Snap interval to nearest 'nice' value (1, 0.5, 0.2, etc.)
+            double baseValue = System.Math.Pow(10, System.Math.Floor(System.Math.Log10(roughInterval)));
+            double[] niceIntervals = { 0.5, 1, 2, 5, 10, 25, 100 }; // Common intervals
+            interval = baseValue;
+
+            foreach (var nice in niceIntervals)
+            {
+                double candidate = baseValue * nice;
+                if (candidate >= roughInterval)
+                {
+                    interval = candidate;
+                    break;
+                }
+            }
+
+            // Generate tick positions
+            double min_value = System.Math.Floor(axisMin / interval) * interval;
+            double max_value = System.Math.Ceiling(axisMax / interval) * interval;
+
+            return new Vector2Double(min_value, max_value);
+        }
+
+        public Vector2Double current_range_y
+        {
+            get
+            {
+                if (_current_range_y == Vector2Double.zero)
+                    return fixed_range_y;
+
+                return _current_range_y;
+            }
+            set
+            {
+                _current_range_y = ComputeEvenRange(value.x, value.y, (int)gridSize.y, out var interval_y);
+                gridDelta = new Vector2Double(gridDelta.x, interval_y);
+            }
+        }
+
+        #region Utils
+
+        #endregion
+
+        public override void Refresh()
+        {
+            base.Refresh();
+
+            onRefresh?.Invoke();
+        }
 
         #region Drawing
 
@@ -89,25 +200,20 @@ namespace Atomix.ChartBuilder.VisualElements
         /// <summary>
         /// Step between two grid lines on x and y axis
         /// </summary>
-        public Vector2Double gridSize
+        public Vector2Int gridSize
         {
             get
             {
-                switch (gridSizeMode)
-                {
-                    case GridModes.FixedPointsCount:
-                        return new Vector2Double((int)_gridSize.x, _gridSize.y);
-                    case GridModes.FixedDeltaValue:
-                        var delta_x = current_range_x.y - current_range_x.x;
-                        int points_x = (int)(delta_x / _gridSize.x);
+                int x = (int)_gridSize.x;
+                int y = (int)_gridSize.y;
 
-                        var delta_y = current_range_y.y - current_range_y.x;
-                        int points_y = (int)(delta_y / _gridSize.y);
+                if (_gridSize.x == 0)
+                    x = 10;
 
-                        return new Vector2Double(points_x, points_y);
-                }
+                if (_gridSize.y == 0)
+                    y = 10;
 
-                return new Vector2Double(3, 3);
+                return new Vector2Int(x, y);
             }
             set
             {
@@ -115,35 +221,7 @@ namespace Atomix.ChartBuilder.VisualElements
             }
         }
 
-        public Vector2Double gridDelta
-        {
-            get
-            {
-                switch (gridSizeMode)
-                {
-                    case GridModes.FixedPointsCount:
-                        var delta_x = current_range_x.y - current_range_x.x;
-                        double points_x = delta_x / _gridSize.x;
-
-                        var delta_y = current_range_y.y - current_range_y.x;
-                        double points_y = delta_y / _gridSize.y;
-
-                        return new Vector2Double(points_x, points_y);
-                    case GridModes.FixedDeltaValue:
-                        return new Vector2Double(_gridSize.x, _gridSize.y);
-                }
-
-                return Vector2Double.one;
-            }
-        }
-
-        public GridModes gridSizeMode { get; set; } = GridModes.FixedPointsCount;
-
-        public enum GridModes
-        {
-            FixedPointsCount,
-            FixedDeltaValue
-        }
+        public Vector2Double gridDelta { get; protected set; }
 
         /// <summary>
         /// Affiche les lignes X, Y ancrées en bas à gauche du graphe
@@ -167,6 +245,8 @@ namespace Atomix.ChartBuilder.VisualElements
 
         public void DrawAutomaticGrid(int fontSize = 12, string x_axis_title = "x", string y_axis_title = "y", float graphLineWidth = 2f)
         {
+            Refresh();
+
             _gridLineWidth = graphLineWidth;
 
             generateVisualContent += DrawAutomaticGridCallback;
@@ -174,7 +254,7 @@ namespace Atomix.ChartBuilder.VisualElements
             this.RegisterCallbackOnce<GeometryChangedEvent>(e =>
             {
                 int grid_points_x = (int)this.gridSize.x;
-                int grid_points_y = (int) this.gridSize.y;
+                int grid_points_y = (int)this.gridSize.y;
 
                 AddAxisXGraduationsText(fontSize, grid_points_x);
 
@@ -272,13 +352,17 @@ namespace Atomix.ChartBuilder.VisualElements
             this.Add(axis_container);
         }
 
-        protected void DrawAxisCallback(MeshGenerationContext ctx)
+        protected virtual void DrawAxisCallback(MeshGenerationContext ctx)
         {
             var painter2D = ctx.painter2D;
             painter2D.lineWidth = _gridLineWidth;
             painter2D.strokeColor = _gridColor;
 
             painter2D.BeginPath();
+
+            Debug.LogError("Todo calculate position of zero, zero");
+
+            var zero_coord_x = current_range_x.y - current_range_x.x;
 
             painter2D.MoveTo(Plot(0, 0));
             painter2D.LineTo(Plot(1, 0));
@@ -297,7 +381,7 @@ namespace Atomix.ChartBuilder.VisualElements
 
             painter2D.BeginPath();
 
-            var points_y = (int) gridSize.y;
+            var points_y = (int)gridSize.y;
 
             for (int i = 0; i <= points_y; ++i)
             {

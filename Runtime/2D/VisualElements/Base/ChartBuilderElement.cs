@@ -142,7 +142,7 @@ namespace Atomix.ChartBuilder.VisualElements
         #endregion
 
 
-        public void Refresh()
+        public virtual void Refresh()
         {
             MarkDirtyRepaint();
         }

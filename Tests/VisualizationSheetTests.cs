@@ -35,8 +35,7 @@ namespace Atomix.ChartBuilder
 
             var lineGraph = _visualizationSheet.Add_SimpleLine(points, 2, new Vector2Int(100, 100), parent);
             lineGraph.SetPadding(50, 50, 50, 50);
-            lineGraph.gridSize = new Vector2Double(10, 10);
-            lineGraph.gridSizeMode = ChartBaseElement.GridModes.FixedPointsCount;
+            lineGraph.gridSize = new Vector2Int(10, 10);
             lineGraph.DrawAutomaticGrid();
 
             lineGraph.Refresh();
@@ -92,8 +91,6 @@ namespace Atomix.ChartBuilder
             var scatter = _visualizationSheet.Add_Scatter(points, new Vector2Int(100, 100), parent);
             scatter.SetPadding(50, 50, 50, 50);
             scatter.backgroundColor = Color.white;
-            scatter.gridSize = new Vector2Double(X * 2 / 20, X * 2 / 20);
-            scatter.gridSizeMode = VisualElements.ChartBaseElement.GridModes.FixedDeltaValue;
 
             scatter.gridColor = new Color(.9f, .9f, .9f, .5f);
 
@@ -102,7 +99,7 @@ namespace Atomix.ChartBuilder
             parent.SetTitle("Scatter Graph");
         }
 
-        private void Test_ScatterFixedGrid(int pCount = 100, int X = 100, int Y = 100)
+        private void Test_ScatterFixedGrid(int pCount = 100, float X = 100, float Y = 100)
         {
             _visualizationSheet.Awake();
 
@@ -119,9 +116,7 @@ namespace Atomix.ChartBuilder
             var scatter = _visualizationSheet.Add_Scatter(points, new Vector2Int(100, 100), parent);
             scatter.SetPadding(50, 50, 50, 50);
             scatter.backgroundColor = Color.white;
-            scatter.gridSize = new Vector2Double(6, 6);
-            scatter.gridSizeMode = ChartBaseElement.GridModes.FixedPointsCount;
-
+            scatter.gridSize = new Vector2Int(6, 6);
             scatter.gridColor = new Color(.9f, .9f, .9f, .5f);
 
             scatter.DrawAutomaticGrid(12, "Densité des X", "Densité des Y");
@@ -129,7 +124,7 @@ namespace Atomix.ChartBuilder
             parent.SetTitle("Scatter Graph");
         }
 
-        private void Test_ScatterFixedGrid_Classes(int pCount = 500, int X = 100, int Y = 100)
+        private void Test_ScatterFixedGrid_Classes(int pCount = 500, float X = 100, float Y = 100)
         {
             _visualizationSheet.Awake();
 
@@ -159,8 +154,6 @@ namespace Atomix.ChartBuilder
             var scatter = _visualizationSheet.Add_Scatter(dict, new Vector2Int(100, 100), parent);
             scatter.SetPadding(50, 50, 50, 50);
             scatter.backgroundColor = Color.white;
-            scatter.gridSize = new Vector2Double(6, 6);
-            scatter.gridSizeMode = ChartBaseElement.GridModes.FixedPointsCount;
 
             scatter.gridColor = new Color(.9f, .9f, .9f, .5f);
 
@@ -198,8 +191,6 @@ namespace Atomix.ChartBuilder
             var scatter = _visualizationSheet.Add_Scatter(dict, new Vector2Int(100, 100), parent);
             scatter.SetPadding(50, 50, 50, 50);
             scatter.backgroundColor = Color.white;
-            scatter.gridSize = new Vector2Double(6, 6);
-            scatter.gridSizeMode = ChartBaseElement.GridModes.FixedDeltaValue;
 
             scatter.gridColor = new Color(.9f, .9f, .9f, .5f);
 
@@ -238,6 +229,12 @@ namespace Atomix.ChartBuilder
             if (GUILayout.Button(nameof(Test_ScatterFixedGrid_Classes)))
             {
                 Test_ScatterFixedGrid_Classes();
+            }
+
+
+            if (GUILayout.Button(nameof(Test_ScatterFixedGrid_Classes) + "_smallValues"))
+            {
+                Test_ScatterFixedGrid_Classes(35, 1, 1);
             }
 
             if (GUILayout.Button(nameof(Test_ScatterFixedDelta_Values)))

@@ -15,14 +15,26 @@ namespace Atomix.ChartBuilder.VisualElements
     /// </summary>
     public class SimpleLineChart : ChartBaseElement
     {
+        private Func<double> _function;
         private double[] _pointsY;
         private double[,] _pointsXY;
 
         private List<double> _pointsYList;
         private List<Vector2> _pointsXYList;
 
-        public override Vector2Double current_range_y { get; set; }
-        public override Vector2Double current_range_x { get; set; }
+        /// <summary>
+        /// Creates a function graph on the interval
+        /// </summary>
+        /// <param name="function"></param>
+        /// <param name="min_max_x"></param>
+        public SimpleLineChart(Func<double> function, Vector2Double interval_x)
+        {
+            _function = function;
+            current_range_x = interval_x;
+
+            backgroundColor = _backgroundColor;
+            generateVisualContent += GenerateFunctionLine;
+        }
 
         /// <summary>
         /// Unidimensional mode, the points will be placed by the maximum avalaible interval on X axis
@@ -104,6 +116,40 @@ namespace Atomix.ChartBuilder.VisualElements
             }
         }
 
+        /// <summary>
+        /// Generate the line without knowing any x value, so we assume a equal distribution of points on x and just compute the interval by pointsCount / avalaibleWidth 
+        /// </summary>
+        /// <param name="ctx"></param>
+        protected void GenerateFunctionLine(MeshGenerationContext ctx)
+        {
+            var painter2D = ctx.painter2D;
+
+            painter2D.lineWidth = _lineWidth;
+            painter2D.strokeColor = strokeColor;
+
+            // compute y range
+
+            // calculate interval of values from a given number of points
+
+            painter2D.BeginPath();
+
+            var relative_position_x = 0.0;
+            var relative_position_y = MathHelpers.Lerp(_pointsY[0], current_range_y.x, current_range_y.y);
+
+            painter2D.MoveTo(Plot(relative_position_x, relative_position_y));
+
+            for (int i = 0; i < _pointsY.Length; i++)
+            {
+                relative_position_x = MathHelpers.Lerp(i, current_range_x.x, current_range_x.y);
+                relative_position_y = MathHelpers.Lerp(_pointsY[i], current_range_y.x, current_range_y.y);
+
+                painter2D.LineTo(Plot(relative_position_x, relative_position_y));
+
+            }
+
+            painter2D.Stroke();
+        } 
+        
         /// <summary>
         /// Generate the line without knowing any x value, so we assume a equal distribution of points on x and just compute the interval by pointsCount / avalaibleWidth 
         /// </summary>
