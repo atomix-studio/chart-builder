@@ -279,58 +279,42 @@ namespace Atomix.ChartBuilder.VisualElements
 
             foreach (var kvp in points)
             {
-                if (fixed_range_x == Vector2Double.zero)
-                {
-                    MathHelpers.ColumnMinMax(kvp.Value, 0, out var range_x);
-                    min_max_x.x = System.Math.Min(min_max_x.x, range_x.x);
-                    min_max_x.y = System.Math.Max(min_max_x.y, range_x.y);
-                }
+                MathHelpers.ColumnMinMax(kvp.Value, 0, out var range_x);
+                min_max_x.x = System.Math.Min(min_max_x.x, range_x.x);
+                min_max_x.y = System.Math.Max(min_max_x.y, range_x.y);
 
-                if (fixed_range_y == Vector2Double.zero)
-                {
-                    MathHelpers.ColumnMinMax(kvp.Value, 1, out var range_y);
-                    min_max_y.x = System.Math.Min(min_max_y.x, range_y.x);
-                    min_max_y.y = System.Math.Max(min_max_y.y, range_y.y);
-                }
+                MathHelpers.ColumnMinMax(kvp.Value, 1, out var range_y);
+                min_max_y.x = System.Math.Min(min_max_y.x, range_y.x);
+                min_max_y.y = System.Math.Max(min_max_y.y, range_y.y);
             }
 
-            if (fixed_range_x == Vector2Double.zero)
-                current_range_x = min_max_x;
+            current_range_x = min_max_x;
 
-            if (fixed_range_y == Vector2Double.zero)
-                current_range_y = min_max_y;
+            current_range_y = min_max_y;
         }
 
         private void InitDynamicRange(Dictionary<double[,], double> points)
         {
-           /* if (current_range_x != Vector2Double.zero && current_range_y != Vector2Double.zero)
-                return;*/
+            /* if (current_range_x != Vector2Double.zero && current_range_y != Vector2Double.zero)
+                 return;*/
 
             Vector2Double min_max_x = new Vector2Double(double.MaxValue, double.MinValue);
             Vector2Double min_max_y = new Vector2Double(double.MaxValue, double.MinValue);
 
             foreach (var kvp in points)
             {
-                if (fixed_range_x == Vector2Double.zero)
-                {
-                    MathHelpers.ColumnMinMax(kvp.Key, 0, out var range_x);
-                    min_max_x.x = System.Math.Min(min_max_x.x, range_x.x);
-                    min_max_x.y = System.Math.Max(min_max_x.y, range_x.y);
-                }
+                MathHelpers.ColumnMinMax(kvp.Key, 0, out var range_x);
+                min_max_x.x = System.Math.Min(min_max_x.x, range_x.x);
+                min_max_x.y = System.Math.Max(min_max_x.y, range_x.y);
 
-                if (fixed_range_y == Vector2Double.zero)
-                {
-                    MathHelpers.ColumnMinMax(kvp.Key, 1, out var range_y);
-                    min_max_y.x = System.Math.Min(min_max_y.x, range_y.x);
-                    min_max_y.y = System.Math.Max(min_max_y.y, range_y.y);
-                }
+                MathHelpers.ColumnMinMax(kvp.Key, 1, out var range_y);
+                min_max_y.x = System.Math.Min(min_max_y.x, range_y.x);
+                min_max_y.y = System.Math.Max(min_max_y.y, range_y.y);
             }
 
-            if (fixed_range_x == Vector2Double.zero)
-                current_range_x = min_max_x;
+            current_range_x = min_max_x;
 
-            if (fixed_range_y == Vector2Double.zero)
-                current_range_y = min_max_y;
+            current_range_y = min_max_y;
         }
 
         private void InitDynamicRange(double[,] points)
@@ -338,17 +322,11 @@ namespace Atomix.ChartBuilder.VisualElements
             /*if (current_range_x != Vector2Double.zero && current_range_y != Vector2Double.zero)
                 return;*/
 
-            if (fixed_range_x == Vector2Double.zero)
-            {
-                MathHelpers.ColumnMinMax(points, 0, out var range_x);
-                current_range_x = range_x;
-            }
+            MathHelpers.ColumnMinMax(points, 0, out var range_x);
+            current_range_x = range_x;
 
-            if(fixed_range_y == Vector2Double.zero)
-            {
-                MathHelpers.ColumnMinMax(points, 1, out var range_y);
-                current_range_y = range_y;
-            }            
+            MathHelpers.ColumnMinMax(points, 1, out var range_y);
+            current_range_y = range_y;
         }
     }
 }

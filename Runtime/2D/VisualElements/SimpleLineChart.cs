@@ -61,13 +61,13 @@ namespace Atomix.ChartBuilder.VisualElements
             generateVisualContent += GenerateLineXY;
         }
 
-       /* public SimpleLineChart(List<double> getValuesDelegate)
-        {
-            _pointsYList = getValuesDelegate;
-            InitArrayRangeY();
-            backgroundColor = _backgroundColor;
-            generateVisualContent += GenerateLineYDynamic;
-        }*/
+        /* public SimpleLineChart(List<double> getValuesDelegate)
+         {
+             _pointsYList = getValuesDelegate;
+             InitArrayRangeY();
+             backgroundColor = _backgroundColor;
+             generateVisualContent += GenerateLineYDynamic;
+         }*/
 
         /*public SimpleLineChart(List<Vector2> getValuesDelegate)
         {
@@ -82,38 +82,17 @@ namespace Atomix.ChartBuilder.VisualElements
         {
             current_range_x = new Vector2Double(0, _pointsY.Length);
 
-            if (fixed_range_y == Vector2Double.zero)
-            {
-                MathHelpers.ColumnMinMax(_pointsY, out var range_y);
-                current_range_y = range_y;
-            }
-            else
-            {
-                current_range_y = fixed_range_y;
-            }
+            MathHelpers.ColumnMinMax(_pointsY, out var range_y);
+            current_range_y = range_y;
         }
 
         private void InitArrayRangeXY()
         {
-            if (fixed_range_x == Vector2Double.zero)
-            {
-                MathHelpers.ColumnMinMax(_pointsXY, 0, out var range_y);
-                current_range_x = range_y;
-            }
-            else
-            {
-                current_range_x = fixed_range_x;
-            }
+            MathHelpers.ColumnMinMax(_pointsXY, 0, out var range_x);
+            current_range_x = range_x;
 
-            if (fixed_range_y == Vector2Double.zero)
-            {
-                MathHelpers.ColumnMinMax(_pointsXY, 1, out var range_y);
-                current_range_y = range_y;
-            }
-            else
-            {
-                current_range_y = fixed_range_y;
-            }
+            MathHelpers.ColumnMinMax(_pointsXY, 1, out var range_y);
+            current_range_y = range_y;
         }
 
         /// <summary>
@@ -148,8 +127,8 @@ namespace Atomix.ChartBuilder.VisualElements
             }
 
             painter2D.Stroke();
-        } 
-        
+        }
+
         /// <summary>
         /// Generate the line without knowing any x value, so we assume a equal distribution of points on x and just compute the interval by pointsCount / avalaibleWidth 
         /// </summary>

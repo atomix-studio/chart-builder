@@ -28,12 +28,6 @@ namespace Atomix.ChartBuilder.VisualElements
 
         public Action onRefresh { get; set; }
 
-        /// <summary>
-        /// Valeur min-max en Y (toute valeur dépassant ce seuil sera hors du graphe)
-        /// </summary>
-        public Vector2Double fixed_range_y { get; set; }
-        public Vector2Double fixed_range_x { get; set; }
-
         private Vector2Double _current_range_x;
         private Vector2Double _current_range_y;
 
@@ -42,9 +36,6 @@ namespace Atomix.ChartBuilder.VisualElements
         {
             get
             {
-                if (_current_range_x == Vector2Double.zero)
-                    return fixed_range_x;
-
                 return _current_range_x;
             }
             set
@@ -124,9 +115,6 @@ namespace Atomix.ChartBuilder.VisualElements
         {
             get
             {
-                if (_current_range_y == Vector2Double.zero)
-                    return fixed_range_y;
-
                 return _current_range_y;
             }
             set
