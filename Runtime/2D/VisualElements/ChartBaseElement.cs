@@ -45,6 +45,19 @@ namespace Atomix.ChartBuilder.VisualElements
             }
         }
 
+        public Vector2Double current_range_y
+        {
+            get
+            {
+                return _current_range_y;
+            }
+            set
+            {
+                _current_range_y = ComputeEvenRange(value.x, value.y, (int)gridSize.y, out var interval_y);
+                gridDelta = new Vector2Double(gridDelta.x, interval_y);
+            }
+        }
+
         public static List<double> ComputeReasonableTicks(double axisMin, double axisMax, int maxTicks = 15)
         {
             // Calculate default range
@@ -109,19 +122,6 @@ namespace Atomix.ChartBuilder.VisualElements
             double max_value = System.Math.Ceiling(axisMax / interval) * interval;
 
             return new Vector2Double(min_value, max_value);
-        }
-
-        public Vector2Double current_range_y
-        {
-            get
-            {
-                return _current_range_y;
-            }
-            set
-            {
-                _current_range_y = ComputeEvenRange(value.x, value.y, (int)gridSize.y, out var interval_y);
-                gridDelta = new Vector2Double(gridDelta.x, interval_y);
-            }
         }
 
         #region Utils
@@ -394,6 +394,378 @@ namespace Atomix.ChartBuilder.VisualElements
 
         #endregion
 
+        #region Drawing
+
+        protected Dictionary<Vector2, Vector2Double> _plottedPositions = new Dictionary<Vector2, Vector2Double>();
+
+
+        #region AddDrawing
+
+        public void AppendLine(double[,] points, Color lineColor, float lineWidth)
+        {
+            generateVisualContent += (meshGenerationContext) =>
+            {
+                _lineWidth = lineWidth;
+                _strokeColor = lineColor;
+
+                GenerateLineXY(meshGenerationContext, points, false);
+            };
+        } 
+        
+        public void AppendScatter(double[,] points, Color scatterColor, float lineWidth)
+        {
+            generateVisualContent += (meshGenerationContext) =>
+            {
+                _lineWidth = lineWidth;
+                _strokeColor = scatterColor;
+
+                GenerateScatter(meshGenerationContext, points, false);
+            };
+        }
+
+        #endregion
+
+        #region Line
+
+
+        /// <summary>
+        /// Generate the line without knowing any x value, so we assume a equal distribution of points on x and just compute the interval by pointsCount / avalaibleWidth 
+        /// </summary>
+        /// <param name="ctx"></param>
+        protected void GenerateFunctionLine(MeshGenerationContext ctx, Func<double, double> function, Vector2Double x_interval)
+        {
+            var painter2D = ctx.painter2D;
+
+            painter2D.lineWidth = _lineWidth;
+            painter2D.strokeColor = strokeColor;
+
+            // compute y range
+
+            // calculate interval of values from a given number of points
+
+            /*painter2D.BeginPath();
+
+            var relative_position_x = 0.0;
+            var relative_position_y = MathHelpers.Lerp(_pointsY[0], current_range_y.x, current_range_y.y);
+
+            painter2D.MoveTo(Plot(relative_position_x, relative_position_y));
+
+            for (int i = 0; i < _pointsY.Length; i++)
+            {
+                relative_position_x = MathHelpers.Lerp(i, current_range_x.x, current_range_x.y);
+                relative_position_y = MathHelpers.Lerp(_pointsY[i], current_range_y.x, current_range_y.y);
+
+                painter2D.LineTo(Plot(relative_position_x, relative_position_y));
+
+            }*/
+
+            painter2D.Stroke();
+        }
+
+        /// <summary>
+        /// Generate the line without knowing any x value, so we assume a equal distribution of points on x and just compute the interval by pointsCount / avalaibleWidth 
+        /// </summary>
+        /// <param name="ctx"></param>
+        protected void GenerateLineY(MeshGenerationContext ctx, double[] points, bool initializeRange)
+        {
+            var painter2D = ctx.painter2D;
+
+            painter2D.lineWidth = _lineWidth;
+            painter2D.strokeColor = strokeColor;
+
+            if (initializeRange)
+                InitRange_pointsY(points);
+
+            painter2D.BeginPath();
+
+            var relative_position_x = 0.0;
+            var relative_position_y = MathHelpers.Lerp(points[0], current_range_y.x, current_range_y.y);
+
+            painter2D.MoveTo(Plot(relative_position_x, relative_position_y));
+
+            for (int i = 0; i < points.Length; i++)
+            {
+                relative_position_x = MathHelpers.Lerp(i, current_range_x.x, current_range_x.y);
+                relative_position_y = MathHelpers.Lerp(points[i], current_range_y.x, current_range_y.y);
+
+                painter2D.LineTo(Plot(relative_position_x, relative_position_y));
+
+            }
+
+            painter2D.Stroke();
+        }
+
+        protected void GenerateLineXY(MeshGenerationContext ctx, double[,] points, bool initializeRange)
+        {
+            var painter2D = ctx.painter2D;
+
+            painter2D.lineWidth = _lineWidth;
+            painter2D.strokeColor = strokeColor;
+
+            if (initializeRange)
+                InitRange_pointsXY(points);
+
+
+
+            var relative_position_x = MathHelpers.Lerp(points[0, 0], current_range_x.x, current_range_x.y);
+            var relative_position_y = MathHelpers.Lerp(points[0, 1], current_range_y.x, current_range_y.y);
+
+            painter2D.BeginPath();
+            painter2D.MoveTo(Plot(relative_position_x, relative_position_y));
+
+            for (int i = 0; i < points.GetLength(0); i++)
+            {
+                relative_position_x = MathHelpers.Lerp(points[i, 0], current_range_x.x, current_range_x.y);
+                relative_position_y = MathHelpers.Lerp(points[i, 1], current_range_y.x, current_range_y.y);
+
+                painter2D.LineTo(Plot(relative_position_x, relative_position_y));
+            }
+
+            painter2D.Stroke();
+        }
+
+        #endregion
+
+        #region Scatter
+
+        protected void GenerateGradientColoredScatter(MeshGenerationContext ctx, double[,] pointsXY, bool initializeRange)
+        {
+            var painter2D = ctx.painter2D;
+
+            painter2D.lineWidth = _lineWidth;
+            painter2D.strokeColor = strokeColor;
+
+            if (pointsXY.Length == 0)
+                return;
+
+            if (pointsXY.GetLength(1) != 2)
+                throw new Exception($"Scatter2D requires only 2 column matrix");
+
+            _plottedPositions.Clear();
+
+            if (initializeRange)
+                InitRange_pointsXY(pointsXY);
+
+            for (int i = 0; i < pointsXY.GetLength(0); ++i)
+            {
+                var relative_position_x = MathHelpers.Lerp(pointsXY[i, 0], current_range_x.x, current_range_x.y);
+                var relative_position_y = MathHelpers.Lerp(pointsXY[i, 1], current_range_y.x, current_range_y.y);
+
+                painter2D.BeginPath();
+
+                var plot_position = Plot(relative_position_x, relative_position_y);
+                _plottedPositions.TryAdd(plot_position, new Vector2Double(pointsXY[i, 0], pointsXY[i, 1]));
+
+                painter2D.Arc(plot_position, _lineWidth, 0, 360);
+
+                // coloriser avec gradient
+
+                var color_x = VisualizationSheet.visualizationSettings.warmGradient.Evaluate((float)relative_position_x);
+                var color_y = VisualizationSheet.visualizationSettings.coldGradient.Evaluate((float)relative_position_y);
+
+                float mean = (float)(relative_position_x + relative_position_y) / 2;
+
+                painter2D.fillColor = Color.Lerp(color_x, color_y, mean);
+
+                painter2D.Fill();
+            }
+
+            painter2D.Stroke();
+        }
+
+        protected void GenerateScatter(MeshGenerationContext ctx, double[,] pointsXY, bool initializeRange)
+        {
+            var painter2D = ctx.painter2D;
+
+            painter2D.lineWidth = _lineWidth;
+            painter2D.strokeColor = strokeColor;
+            painter2D.fillColor = strokeColor;
+
+            if (pointsXY.Length == 0)
+                return;
+
+            if (pointsXY.GetLength(1) != 2)
+                throw new Exception($"Scatter2D requires only 2 column matrix");
+
+            _plottedPositions.Clear();
+
+            if (initializeRange)
+                InitRange_pointsXY(pointsXY);
+
+            for (int i = 0; i < pointsXY.GetLength(0); ++i)
+            {
+                var relative_position_x = MathHelpers.Lerp(pointsXY[i, 0], current_range_x.x, current_range_x.y);
+                var relative_position_y = MathHelpers.Lerp(pointsXY[i, 1], current_range_y.x, current_range_y.y);
+
+                painter2D.BeginPath();
+
+                var plot_position = Plot(relative_position_x, relative_position_y);
+                _plottedPositions.TryAdd(plot_position, new Vector2Double(pointsXY[i, 0], pointsXY[i, 1]));
+
+                //painter2D.MoveTo(plot_position);
+                painter2D.Arc(plot_position, _lineWidth, 0, 360);
+
+                painter2D.Fill();
+                painter2D.ClosePath();
+
+            }
+            painter2D.Stroke();
+            painter2D.ClosePath();
+        }
+
+        protected void GenerateClassColoredScatter(MeshGenerationContext ctx, Dictionary<Color, double[,]> colorClassedPoints, bool initializeRange)
+        {
+            var painter2D = ctx.painter2D;
+
+            painter2D.lineWidth = _lineWidth;
+            painter2D.strokeColor = strokeColor;
+
+            if (colorClassedPoints.Count == 0)
+                return;
+
+            _plottedPositions.Clear();
+
+            if (initializeRange)
+                InitRange_colorClassedPoints(colorClassedPoints);
+
+            foreach (var kvp in colorClassedPoints)
+            {
+                for (int i = 0; i < kvp.Value.GetLength(0); ++i)
+                {
+                    var relative_position_x = MathHelpers.Lerp(kvp.Value[i, 0], current_range_x.x, current_range_x.y);
+                    var relative_position_y = MathHelpers.Lerp(kvp.Value[i, 1], current_range_y.x, current_range_y.y);
+
+                    painter2D.BeginPath();
+
+                    var plot_position = Plot(relative_position_x, relative_position_y);
+                    _plottedPositions.TryAdd(plot_position, new Vector2Double(kvp.Value[i, 0], kvp.Value[i, 1]));
+
+                    painter2D.Arc(plot_position, _lineWidth, 0, 360);
+
+                    painter2D.fillColor = kvp.Key;
+
+                    painter2D.Fill();
+                }
+            }
+
+            painter2D.Stroke();
+        }
+
+        protected void GenerateValueDrivenGradientColoredScatter(MeshGenerationContext ctx, Dictionary<double[,], double> colorClassedPoints, bool initializeRange)
+        {
+            var painter2D = ctx.painter2D;
+
+            painter2D.lineWidth = _lineWidth;
+            painter2D.strokeColor = strokeColor;
+
+            if (colorClassedPoints.Count == 0)
+                return;
+
+            _plottedPositions.Clear();
+
+            if (initializeRange)
+                InitRange_pointsXYValues(colorClassedPoints);
+
+            Vector2 min_max_value = new Vector2(float.MaxValue, float.MinValue);
+            foreach (var kvp in colorClassedPoints)
+            {
+                min_max_value.x = System.Math.Min((float)kvp.Value, min_max_value.x);
+                min_max_value.y = System.Math.Max((float)kvp.Value, min_max_value.y);
+            }
+
+            foreach (var kvp in colorClassedPoints)
+            {
+                for (int i = 0; i < kvp.Key.GetLength(0); ++i)
+                {
+                    var relative_position_x = MathHelpers.Lerp(kvp.Key[i, 0], current_range_x.x, current_range_x.y);
+                    var relative_position_y = MathHelpers.Lerp(kvp.Key[i, 1], current_range_y.x, current_range_y.y);
+
+                    painter2D.BeginPath();
+
+                    var plot_position = Plot(relative_position_x, relative_position_y);
+                    _plottedPositions.TryAdd(plot_position, new Vector2Double(kvp.Key[i, 0], kvp.Key[i, 1]));
+
+                    painter2D.Arc(plot_position, _lineWidth, 0, 360);
+
+                    var normalized_value = (float)MathHelpers.Lerp(kvp.Value, min_max_value.x, min_max_value.y);
+                    var color = VisualizationSheet.visualizationSettings.valueGradient.Evaluate(normalized_value);
+
+                    painter2D.fillColor = color;
+
+                    painter2D.Fill();
+                }
+            }
+
+            painter2D.Stroke();
+        }
+
+        #endregion
+
+        #region Range Init
+
+
+        protected void InitRange_colorClassedPoints(Dictionary<Color, double[,]> points)
+        {
+            Vector2Double min_max_x = new Vector2Double(double.MaxValue, double.MinValue);
+            Vector2Double min_max_y = new Vector2Double(double.MaxValue, double.MinValue);
+
+            foreach (var kvp in points)
+            {
+                MathHelpers.ColumnMinMax(kvp.Value, 0, out var range_x);
+                min_max_x.x = System.Math.Min(min_max_x.x, range_x.x);
+                min_max_x.y = System.Math.Max(min_max_x.y, range_x.y);
+
+                MathHelpers.ColumnMinMax(kvp.Value, 1, out var range_y);
+                min_max_y.x = System.Math.Min(min_max_y.x, range_y.x);
+                min_max_y.y = System.Math.Max(min_max_y.y, range_y.y);
+            }
+
+            current_range_x = min_max_x;
+
+            current_range_y = min_max_y;
+        }
+
+        protected void InitRange_pointsXYValues(Dictionary<double[,], double> points)
+        {
+            Vector2Double min_max_x = new Vector2Double(double.MaxValue, double.MinValue);
+            Vector2Double min_max_y = new Vector2Double(double.MaxValue, double.MinValue);
+
+            foreach (var kvp in points)
+            {
+                MathHelpers.ColumnMinMax(kvp.Key, 0, out var range_x);
+                min_max_x.x = System.Math.Min(min_max_x.x, range_x.x);
+                min_max_x.y = System.Math.Max(min_max_x.y, range_x.y);
+
+                MathHelpers.ColumnMinMax(kvp.Key, 1, out var range_y);
+                min_max_y.x = System.Math.Min(min_max_y.x, range_y.x);
+                min_max_y.y = System.Math.Max(min_max_y.y, range_y.y);
+            }
+
+            current_range_x = min_max_x;
+
+            current_range_y = min_max_y;
+        }
+
+        protected void InitRange_pointsXY(double[,] points)
+        {
+            MathHelpers.ColumnMinMax(points, 0, out var range_x);
+            current_range_x = range_x;
+
+            MathHelpers.ColumnMinMax(points, 1, out var range_y);
+            current_range_y = range_y;
+        }
+
+        protected void InitRange_pointsY(double[] points)
+        {
+            current_range_x = new Vector2Double(0, points.Length);
+
+            MathHelpers.ColumnMinMax(points, out var range_y);
+            current_range_y = range_y;
+        }
+
+        #endregion
+
+        #endregion
 
     }
 }

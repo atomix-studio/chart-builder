@@ -142,7 +142,7 @@ namespace Atomix.ChartBuilder
 */
         public Scatter2DChart Add_Scatter(double[,] matrice, Vector2Int dimensions, VisualElement container = null)
         {
-            var chart = new Scatter2DChart(() => matrice);
+            var chart = new Scatter2DChart(matrice);
             chart.SetDimensions(container != null ? LengthUnit.Percent : LengthUnit.Pixel, dimensions.x, dimensions.y);
             return AddChart(chart, container);
         }

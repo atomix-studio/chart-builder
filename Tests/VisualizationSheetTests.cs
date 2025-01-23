@@ -39,6 +39,8 @@ namespace Atomix.ChartBuilder
             lineGraph.DrawAutomaticGrid();
 
             lineGraph.Refresh();
+
+
         }
 
         private void Test_SimpleLine2()
@@ -92,6 +94,17 @@ namespace Atomix.ChartBuilder
             var line = _visualizationSheet.Add_SimpleLine(points, 2, new Vector2Int(100, 100), parent);
             line.SetPadding(50, 50, 50, 50);
             line.DrawAutomaticGrid();
+
+            var points2 = new double[50, 2];
+
+            for (int i = 0; i < 50; ++i)
+            {
+                points2[i, 0] = RandomHelpers.Shared.Range(-5, 100);
+                points2[i, 1] = RandomHelpers.Shared.Range(-5, 5000);
+            }
+
+            line.AppendScatter(points2, Color.red, 5);
+            line.Refresh();
         }
 
         private void Test_Scatter(int pCount = 100, int X = 100, int Y = 100)
