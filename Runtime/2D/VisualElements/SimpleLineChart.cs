@@ -167,6 +167,25 @@ namespace Atomix.ChartBuilder.VisualElements
 
             painter2D.lineWidth = _lineWidth;
             painter2D.strokeColor = strokeColor;
+
+            InitArrayRangeXY();
+
+            painter2D.BeginPath();
+
+            var relative_position_x = MathHelpers.Lerp(_pointsXY[0, 0], current_range_x.x, current_range_x.y);
+            var relative_position_y = MathHelpers.Lerp(_pointsXY[0, 1], current_range_y.x, current_range_y.y);
+
+            painter2D.MoveTo(Plot(relative_position_x, relative_position_y));
+
+            for (int i = 0; i < _pointsXY.GetLength(0); i++)
+            {
+                relative_position_x = MathHelpers.Lerp(_pointsXY[i, 0], current_range_x.x, current_range_x.y);
+                relative_position_y = MathHelpers.Lerp(_pointsXY[i, 1], current_range_y.x, current_range_y.y);
+
+                painter2D.LineTo(Plot(relative_position_x, relative_position_y));
+            }
+
+            painter2D.Stroke();
         }
 
         protected void GenerateLineXYDynamic(MeshGenerationContext ctx)

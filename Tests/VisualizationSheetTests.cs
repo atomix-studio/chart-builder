@@ -74,6 +74,26 @@ namespace Atomix.ChartBuilder
             _visualizationSheet.Add_SimpleLine(points, 2, new Vector2Int(500, 500), null);
         }
 
+
+        private void Test_SimpleLineXY()
+        {
+            _visualizationSheet.Awake();
+            var points = new double[100, 100];
+
+            for (int i = 1; i < 100; ++i)
+            {
+                points[i, 0] = i;
+                points[i, 1] = 1.0 / 2.0 * System.Math.Pow(i, 2) + 5;
+            }
+
+            var parent = _visualizationSheet.AddContainer("c1", Color.green, new Vector2Int(500, 500));
+            parent.SetPadding(10, 10, 10, 10);
+
+            var line = _visualizationSheet.Add_SimpleLine(points, 2, new Vector2Int(100, 100), parent);
+            line.SetPadding(50, 50, 50, 50);
+            line.DrawAutomaticGrid();
+        }
+
         private void Test_Scatter(int pCount = 100, int X = 100, int Y = 100)
         {
             _visualizationSheet.Awake();
@@ -214,6 +234,11 @@ namespace Atomix.ChartBuilder
             if (GUILayout.Button(nameof(Test_SimpleLine3)))
             {
                 Test_SimpleLine3();
+            }
+
+            if (GUILayout.Button(nameof(Test_SimpleLineXY)))
+            {
+                Test_SimpleLineXY();
             }
 
             if (GUILayout.Button(nameof(Test_Scatter)))
