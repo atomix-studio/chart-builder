@@ -151,6 +151,26 @@ namespace Atomix.ChartBuilder.VisualElements
             return new Vector2(x, y);
         }
 
+        public float PlotY(double y_normalized)
+        {
+            return (float)(paddingBottom + (1 - y_normalized) * real_heigth);
+        }
+
+        public float GetYPixels(double y_normalized)
+        {
+            return (float)((1 - y_normalized) * real_heigth);
+        }
+
+        public float PlotX(double x_normalized)
+        {
+            return (float)(paddingLeft + x_normalized * real_width);
+        }
+
+        public float GetXPixels(double x_normalized)
+        {
+            return (float)(x_normalized * real_width);
+        }
+
         #endregion
 
         #region Text
@@ -249,9 +269,10 @@ namespace Atomix.ChartBuilder.VisualElements
                 AddAxisYGraduationsText(fontSize, grid_points_y);
 
                 AddAxisXTitleText(x_axis_title, fontSize);
+                AddAxisYTitleText(y_axis_title, fontSize);
 
-                SetTextOnPosition(y_axis_title, new Vector2(0, .5f), -(int)(paddingLeft + 30), 0, fontSize + 2, -90);
-                SetTextOnPosition(x_axis_title, new Vector2(0.5f, 0f), -(int)(x_axis_title.Length * 2 * fontSize / 10), (int)(paddingBottom - 20), fontSize + 2);
+                //SetTextOnPosition(y_axis_title, new Vector2(0, .5f), -(int)(paddingLeft + 30), 0, fontSize + 2, -90);
+                //SetTextOnPosition(x_axis_title, new Vector2(0.5f, 0f), -(int)(x_axis_title.Length * 2 * fontSize / 10), (int)(paddingBottom - 20), fontSize + 2);
 
                 this.MarkDirtyRepaint();
             });
@@ -264,12 +285,56 @@ namespace Atomix.ChartBuilder.VisualElements
             var axis_container = new VisualElement();
             axis_container.style.width = new Length((int)real_width, LengthUnit.Pixel);
             axis_container.style.height = 25;
-            axis_container.style.backgroundColor = Color.red;// new Color(0, 0, 0, 0);//Color.red;
+            axis_container.style.backgroundColor = new Color(0, 0, 0, 0);//Color.red;
             axis_container.style.position = Position.Absolute;
             axis_container.style.justifyContent = Justify.Center;
             axis_container.style.alignContent = Align.Stretch;
             axis_container.style.flexDirection = FlexDirection.Row;
             axis_container.style.bottom = 0;
+
+            var label = new Label(title);
+
+            label.style.position = Position.Relative;
+            label.style.width = new Length((int)real_width, LengthUnit.Pixel);
+            label.style.fontSize = fontSize;
+            label.style.unityTextAlign = new StyleEnum<TextAnchor>(TextAnchor.MiddleCenter);
+            label.style.alignSelf = Align.Center;  // Centers the label inside its container (vertically and horizontally)
+                                                   //label.style.unityTextAlign = new StyleEnum<TextAnchor>(TextAnchor.UpperCenter);
+            label.AddToClassList("normal-text");
+
+            axis_container.Add(label);
+
+            this.Add(axis_container);
+        }
+
+        private void AddAxisYTitleText(string title, int fontSize)
+        {
+            var axis_container_height = 25;
+            var axis_container = new VisualElement();
+            axis_container.style.height = new Length((int)real_heigth, LengthUnit.Pixel);
+            axis_container.style.backgroundColor = new Color(0, 0, 0, 0);// Color.green;
+            axis_container.style.position = Position.Absolute;
+            axis_container.style.left = 0;
+            //axis_container.style.translate = new StyleTranslate(new Translate(new Length(-30, LengthUnit.Pixel), new Length(), 0));// ;
+            axis_container.style.justifyContent = Justify.SpaceEvenly;
+            axis_container.style.alignContent = Align.Stretch;
+            axis_container.style.flexDirection = FlexDirection.Column;
+            axis_container.style.width = axis_container_height;
+
+            var label = new Label(title);
+
+            label.style.position = Position.Relative;
+            label.style.width = new Length((int)real_width, LengthUnit.Pixel);
+            label.style.fontSize = fontSize;
+            label.style.unityTextAlign = new StyleEnum<TextAnchor>(TextAnchor.MiddleCenter);
+            label.style.alignSelf = Align.Center;  // Centers the label inside its container (vertically and horizontally)
+                                                   //label.style.unityTextAlign = new StyleEnum<TextAnchor>(TextAnchor.UpperCenter);
+
+            label.transform.rotation *= Quaternion.Euler(0, 0, -90);
+
+            label.AddToClassList("normal-text");
+
+            axis_container.Add(label);
 
             this.Add(axis_container);
         }
@@ -410,8 +475,19 @@ namespace Atomix.ChartBuilder.VisualElements
 
                 GenerateLineXY(meshGenerationContext, points, false);
             };
-        } 
-        
+        }
+
+        public void AppendLine(double[] points, Color lineColor, float lineWidth)
+        {
+            generateVisualContent += (meshGenerationContext) =>
+            {
+                _lineWidth = lineWidth;
+                _strokeColor = lineColor;
+
+                GenerateLineY(meshGenerationContext, points, false);
+            };
+        }
+
         public void AppendScatter(double[,] points, Color scatterColor, float lineWidth)
         {
             generateVisualContent += (meshGenerationContext) =>
@@ -423,10 +499,47 @@ namespace Atomix.ChartBuilder.VisualElements
             };
         }
 
+        public void AppendVerticalBar(double[,] points, float minSpacing = 0)
+        {
+            generateVisualContent += (meshGenerationContext) =>
+            {
+                GenerateVerticalBars(meshGenerationContext, points, minSpacing, false);
+            };
+        }
+
+        public void AppendVerticalBarWithColor(Color color, double[,] points, float minSpacing = 0)
+        {
+            generateVisualContent += (meshGenerationContext) =>
+            {
+                GenerateVerticalBarsWithColor(meshGenerationContext, color, points, minSpacing, false);
+            };
+        }
+
+        public void AppendVerticalBarWithColors(Dictionary<Color, double[,]> colored_points, float minSpacing = 0)
+        {
+            generateVisualContent += (meshGenerationContext) =>
+            {
+                GenerateVerticalBarsWithColor(meshGenerationContext, colored_points, minSpacing, false);
+            };
+        }
+
+        /// <summary>
+        /// Takes a matrice of points with n colomns
+        /// order of columns > low, high, open, close values
+        /// </summary>
+        /// <param name="candleBars"></param>
+        /// <param name="minSpacing"></param>
+        public void AppendCandleBars(double[,] candleBars, float widthRatio = .9f)
+        {
+            generateVisualContent += (meshGenerationContext) =>
+            {
+                GenerateCandleBars(meshGenerationContext, candleBars, widthRatio, false);
+            };
+        }
+
         #endregion
 
         #region Line
-
 
         /// <summary>
         /// Generate the line without knowing any x value, so we assume a equal distribution of points on x and just compute the interval by pointsCount / avalaibleWidth 
@@ -504,8 +617,6 @@ namespace Atomix.ChartBuilder.VisualElements
 
             if (initializeRange)
                 InitRange_pointsXY(points);
-
-
 
             var relative_position_x = MathHelpers.Lerp(points[0, 0], current_range_x.x, current_range_x.y);
             var relative_position_y = MathHelpers.Lerp(points[0, 1], current_range_y.x, current_range_y.y);
@@ -701,6 +812,233 @@ namespace Atomix.ChartBuilder.VisualElements
 
         #endregion
 
+        #region Bars
+        protected void GenerateVerticalBars(MeshGenerationContext ctx, double[,] points, float minSpacing, bool initializeRange)
+        {
+            var painter2D = ctx.painter2D;
+
+
+            if (points.Length == 0)
+                return;
+
+            if (points.GetLength(1) != 2)
+                throw new Exception($"Vertical Bar Chart requires only 2 column matrix");
+
+            //_plottedPositions.Clear();
+            var bar_width = (float)real_width / points.GetLength(0) - minSpacing;
+
+            if (initializeRange)
+                InitRange_pointsXY(points);
+
+            painter2D.BeginPath();
+
+            for (int i = 0; i < points.GetLength(0); ++i)
+            {
+                var relative_position_x = MathHelpers.Lerp(points[i, 0], current_range_x.x, current_range_x.y);
+                var relative_position_y = MathHelpers.Lerp(points[i, 1], current_range_y.x, current_range_y.y);
+
+                var plot_position = Plot(relative_position_x, 0);
+                var bar_height = GetYPixels(relative_position_y);
+
+                // coloriser avec gradient
+
+                var color = VisualizationSheet.visualizationSettings.redToGreenGradient.Evaluate(1f - (float)relative_position_y);
+                painter2D.fillColor = color;
+                painter2D.strokeColor = color;
+
+                DrawRectangle(painter2D, plot_position.x, plot_position.y, bar_height, bar_width);
+            }
+            painter2D.ClosePath();
+        }
+
+        protected void GenerateVerticalBarsWithColor(MeshGenerationContext ctx, Dictionary<Color, double[,]> colored_points, float minSpacing, bool initializeRange)
+        {
+            if (colored_points.Count == 0)
+                return;
+
+            if (colored_points.Values.First().GetLength(1) != 2)
+                throw new Exception($"Vertical Bar Chart Chart requires only 2 column matrix");
+
+            foreach (var col in colored_points)
+            {
+                GenerateVerticalBarsWithColor(ctx, col.Key, col.Value, minSpacing, initializeRange);
+            }
+        }
+
+        protected void GenerateVerticalBarsWithColor(MeshGenerationContext ctx, Color color, double[,] points, float minSpacing, bool initializeRange)
+        {
+            var painter2D = ctx.painter2D;
+
+            if (points.Length == 0)
+                return;
+
+            if (points.GetLength(1) != 2)
+                throw new Exception($"Vertical Bar Chart requires only 2 column matrix");
+
+            //_plottedPositions.Clear();
+            var bar_width = (float)real_width / points.GetLength(0) - minSpacing;
+
+            if (initializeRange)
+                InitRange_pointsXY(points);
+
+            painter2D.BeginPath();
+
+            for (int i = 0; i < points.GetLength(0); ++i)
+            {
+                var relative_position_x = MathHelpers.Lerp(points[i, 0], current_range_x.x, current_range_x.y);
+                var relative_position_y = MathHelpers.Lerp(points[i, 1], current_range_y.x, current_range_y.y);
+
+                var plot_position = Plot(relative_position_x, 0);
+                var bar_height = GetYPixels(relative_position_y);
+
+                // coloriser avec gradient
+
+                painter2D.fillColor = color;
+                painter2D.strokeColor = color;
+
+                DrawRectangle(painter2D, plot_position.x, plot_position.y, bar_height, bar_width);
+            }
+            painter2D.ClosePath();
+        }
+
+        protected void GeneratePositiveNegativeVerticalBars(MeshGenerationContext ctx, double[,] points, float minSpacing, bool initializeRange)
+        {
+            var painter2D = ctx.painter2D;
+
+
+            if (points.Length == 0)
+                return;
+
+            if (points.GetLength(1) != 2)
+                throw new Exception($"Scatter2D requires only 2 column matrix");
+
+            //_plottedPositions.Clear();
+            var bar_width = (float)real_width / points.GetLength(0) - minSpacing;
+
+            if (initializeRange)
+                InitRange_pointsXY(points);
+
+            var y_mean = 0.0;
+            for (int i = 0; i < points.GetLength(0); i++)
+                y_mean += points[i, 1];
+
+            y_mean /= points.GetLength(0);
+
+            painter2D.BeginPath();
+
+            for (int i = 0; i < points.GetLength(0); ++i)
+            {
+                var relative_position_x = MathHelpers.Lerp(points[i, 0], current_range_x.x, current_range_x.y);
+                var relative_position_y = 0.0;
+                var plot_position = Plot(relative_position_x, .5);
+                var bar_height = 0f;
+
+                if (points[i, 1] > y_mean)
+                {
+                    relative_position_y = .5 + MathHelpers.Lerp(points[i, 1], y_mean, current_range_y.y) / 2;
+
+                    bar_height = GetYPixels(relative_position_y);
+
+                    var color = VisualizationSheet.visualizationSettings.redToGreenGradient.Evaluate(1);
+                    painter2D.fillColor = color;
+                    painter2D.strokeColor = color;
+                }
+                else
+                {
+                    relative_position_y = .5 - MathHelpers.Lerp(points[i, 1], y_mean, current_range_y.y) / 2;
+                    bar_height = -GetYPixels(relative_position_y);
+
+                    var color = VisualizationSheet.visualizationSettings.redToGreenGradient.Evaluate(0);
+                    painter2D.fillColor = color;
+                    painter2D.strokeColor = color;
+                }
+
+                // coloriser avec gradient
+
+
+
+                DrawRectangle(painter2D, plot_position.x, plot_position.y, bar_height, bar_width);
+            }
+            painter2D.ClosePath();
+        }
+
+        protected void DrawRectangle(Painter2D painter2D, float x, float y, float height, float width)
+        {
+            painter2D.BeginPath();
+
+            painter2D.lineWidth = (float)width;
+
+            float wh = width / 2;
+            painter2D.MoveTo(new Vector2(x + wh, y));
+            painter2D.LineTo(new Vector2(x + wh, y - height));
+
+            painter2D.Fill();
+            painter2D.Stroke();
+            painter2D.ClosePath();
+
+            //
+        }
+
+        /// <summary>
+        /// order of columns > low, high, open, close values
+        /// </summary>
+        /// <param name="ctx"></param>
+        /// <param name="candleBars"></param>
+        /// <param name="widthRatio"></param>
+        /// <param name="initializeRange"></param>
+        /// <exception cref="Exception"></exception>
+        protected void GenerateCandleBars(MeshGenerationContext ctx, double[,] candleBars, float widthRatio, bool initializeRange)
+        {
+            var painter2D = ctx.painter2D;
+
+            if (candleBars.Length == 0)
+                return;
+
+            if (candleBars.GetLength(1) != 5)
+                throw new Exception($"Vertical Bar Chart requires 5 columns for x, low, high open, and close values");
+
+            //_plottedPositions.Clear();
+            var bar_width = (float)real_width / candleBars.GetLength(0) * widthRatio;
+
+            if (initializeRange)
+                InitRange_pointsXYZWV(candleBars);
+
+            painter2D.BeginPath();
+
+            for (int i = 0; i < candleBars.GetLength(0); ++i)
+            {
+                float low = (float)candleBars[i, 1];
+                float high = (float)candleBars[i, 2];
+                float open = (float)candleBars[i, 3];
+                float close = (float)candleBars[i, 4];
+
+                float candle_body_height = System.Math.Abs(GetYPixels(MathHelpers.Lerp(open, current_range_y.x, current_range_y.y)) - GetYPixels(MathHelpers.Lerp(close, current_range_y.x, current_range_y.y)));
+                float candle_body_bottom = System.Math.Min(open, close);
+                float candle_leg_bottom = System.Math.Min(high, low);
+                float candle_leg_height = System.Math.Abs(GetYPixels(MathHelpers.Lerp(low, current_range_y.x, current_range_y.y)) - GetYPixels(MathHelpers.Lerp(high, current_range_y.x, current_range_y.y)));
+
+                var color = open - close > 0 ? VisualizationSheet.visualizationSettings.redToGreenGradient.Evaluate(0) : VisualizationSheet.visualizationSettings.redToGreenGradient.Evaluate(1);
+                painter2D.fillColor = color;
+                painter2D.strokeColor = color;
+
+                var relative_position_x = MathHelpers.Lerp(candleBars[i, 0], current_range_x.x, current_range_x.y);
+                var relative_body_position_y = MathHelpers.Lerp(candle_body_bottom, current_range_y.x, current_range_y.y);
+                var plot_position = Plot(relative_position_x, relative_body_position_y);
+                // coloriser avec gradient
+                DrawRectangle(painter2D, plot_position.x, plot_position.y, candle_body_height, bar_width);
+
+                relative_position_x = MathHelpers.Lerp(candleBars[i, 0], current_range_x.x, current_range_x.y);
+                relative_body_position_y = MathHelpers.Lerp(candle_leg_bottom, current_range_y.x, current_range_y.y);
+                plot_position = Plot(relative_position_x, relative_body_position_y);
+                // coloriser avec gradient
+                DrawRectangle(painter2D, plot_position.x + bar_width / 2f, plot_position.y, candle_leg_height, bar_width / 6);
+
+            }
+            painter2D.ClosePath();
+        }
+
+        #endregion
+
         #region Range Init
 
 
@@ -752,6 +1090,15 @@ namespace Atomix.ChartBuilder.VisualElements
             current_range_x = range_x;
 
             MathHelpers.ColumnMinMax(points, 1, out var range_y);
+            current_range_y = range_y;
+        } 
+        
+        protected void InitRange_pointsXYZWV(double[,] points)
+        {
+            MathHelpers.ColumnMinMax(points, 0, out var range_x);
+            current_range_x = range_x;
+
+            MathHelpers.RowMinMax(points, 1, out var range_y);
             current_range_y = range_y;
         }
 

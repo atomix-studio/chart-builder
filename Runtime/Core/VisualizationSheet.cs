@@ -34,7 +34,7 @@ namespace Atomix.ChartBuilder
 
             _root = _document.rootVisualElement;
 
-            if(_document.panelSettings.targetTexture != null)
+            if (_document.panelSettings.targetTexture != null)
             {
                 _document.panelSettings.targetTexture.Release();
                 _document.panelSettings.targetTexture.Create();
@@ -121,25 +121,25 @@ namespace Atomix.ChartBuilder
 
             return AddChart(chart, container);
         }
-/*
-        public SimpleLineChart Add_SimpleLine(Func<List<Vector2>> getPoints, float lineWidth, Vector2Int dimensions, VisualElement container = null)
-        {
-            var chart = new SimpleLineChart(getPoints);
-            chart.SetLineWidth(lineWidth);
-            chart.SetDimensions(container != null ? LengthUnit.Percent : LengthUnit.Pixel, dimensions.x, dimensions.y);
+        /*
+                public SimpleLineChart Add_SimpleLine(Func<List<Vector2>> getPoints, float lineWidth, Vector2Int dimensions, VisualElement container = null)
+                {
+                    var chart = new SimpleLineChart(getPoints);
+                    chart.SetLineWidth(lineWidth);
+                    chart.SetDimensions(container != null ? LengthUnit.Percent : LengthUnit.Pixel, dimensions.x, dimensions.y);
 
-            return AddChart(chart, container);
-        }
+                    return AddChart(chart, container);
+                }
 
-        public SimpleLineChart Add_SimpleLine(Func<List<double>> getPoints, float lineWidth, Vector2Int dimensions, VisualElement container = null)
-        {
-            var chart = new SimpleLineChart(getPoints);
-            chart.SetLineWidth(lineWidth);
-            chart.SetDimensions(container != null ? LengthUnit.Percent : LengthUnit.Pixel, dimensions.x, dimensions.y);
+                public SimpleLineChart Add_SimpleLine(Func<List<double>> getPoints, float lineWidth, Vector2Int dimensions, VisualElement container = null)
+                {
+                    var chart = new SimpleLineChart(getPoints);
+                    chart.SetLineWidth(lineWidth);
+                    chart.SetDimensions(container != null ? LengthUnit.Percent : LengthUnit.Pixel, dimensions.x, dimensions.y);
 
-            return AddChart(chart, container);
-        }
-*/
+                    return AddChart(chart, container);
+                }
+        */
         public Scatter2DChart Add_Scatter(double[,] matrice, Vector2Int dimensions, VisualElement container = null)
         {
             var chart = new Scatter2DChart(matrice);
@@ -160,6 +160,28 @@ namespace Atomix.ChartBuilder
             chart.SetDimensions(container != null ? LengthUnit.Percent : LengthUnit.Pixel, dimensions.x, dimensions.y);
             return AddChart(chart, container);
         }
+
+        public VerticalBarChart Add_VerticalBars(double[,] bars, Vector2Int dimensions, VisualElement container = null)
+        {
+            var chart = new VerticalBarChart(bars);
+            chart.SetDimensions(container != null ? LengthUnit.Percent : LengthUnit.Pixel, dimensions.x, dimensions.y);
+            return AddChart(chart, container);
+        }
+
+        public PositiveNegativeVerticalBarChart Add_PositiveNegativeVerticalBars(double[,] bars, Vector2Int dimensions, VisualElement container = null)
+        {
+            var chart = new PositiveNegativeVerticalBarChart(bars);
+            chart.SetDimensions(container != null ? LengthUnit.Percent : LengthUnit.Pixel, dimensions.x, dimensions.y);
+            return AddChart(chart, container);
+        }
+
+        public CandleBarChart Add_CandleBars(double[,] bars, Vector2Int dimensions, VisualElement container = null)
+        {
+            var chart = new CandleBarChart(bars);
+            chart.SetDimensions(container != null ? LengthUnit.Percent : LengthUnit.Pixel, dimensions.x, dimensions.y);
+            return AddChart(chart, container);
+        }
+
 
     }
 }

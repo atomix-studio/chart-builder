@@ -63,6 +63,21 @@ namespace Atomix.ChartBuilder.Math
             }
         }
 
+        public static void RowMinMax(double[,] matrix, int startIndex, out Vector2Double minMax)
+        {
+            minMax = new Vector2Double(double.MaxValue, double.MinValue);
+
+            for (int i = 0; i < matrix.GetLength(0); ++i)
+            {
+                for(int j = startIndex; j < matrix.GetLength(1); ++j)
+                {
+                    minMax.x = System.Math.Min(matrix[i, j], minMax.x);
+                    minMax.y = System.Math.Max(matrix[i, j], minMax.y);
+                }
+            }
+        }
+
+
         public static void ColumnMinMax(List<double> vector, out Vector2Double minMax)
         {
             minMax = new Vector2Double(double.MaxValue, double.MinValue);

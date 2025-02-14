@@ -232,6 +232,107 @@ namespace Atomix.ChartBuilder
             parent.SetTitle("Scatter Graph");
         }
 
+        private void Test_VerticalBars(int pCount = 100, int Y = 100)
+        {
+            _visualizationSheet.Awake();
+
+            var points = new double[pCount, 2];
+
+            for (int i = 0; i < pCount; ++i)
+            {
+                points[i, 0] = i - 50;
+                points[i, 1] = RandomHelpers.Shared.Range(0, Y);
+            }
+
+            var root = _visualizationSheet.AddPixelSizedContainer("root", new Vector2Int(800, 800), null);
+            root.style.alignSelf = Align.Center;
+
+            var parent = _visualizationSheet.AddContainer("c0", Color.black, new Vector2Int(100, 100), root);
+            parent.SetPadding(5, 5, 5, 5);
+            var scatter = _visualizationSheet.Add_VerticalBars(points, new Vector2Int(100, 100), parent);
+            scatter.SetPadding(50, 50, 50, 50);
+            scatter.backgroundColor = Color.white;
+
+            scatter.gridColor = new Color(.9f, .9f, .9f, .5f);
+
+            scatter.DrawAutomaticGrid(12, "X", "Y");
+
+            parent.SetTitle("Simple Bar Chart");
+        }
+
+        private void Test_PNVerticalBars(int pCount = 100, int Y = 100)
+        {
+            _visualizationSheet.Awake();
+
+            var points = new double[pCount, 2];
+
+            for (int i = 0; i < pCount; ++i)
+            {
+                points[i, 0] = i - 50;
+                points[i, 1] = RandomHelpers.Shared.Range(0, Y);
+            }
+
+            var root = _visualizationSheet.AddPixelSizedContainer("root", new Vector2Int(800, 800), null);
+            root.style.alignSelf = Align.Center;
+
+            var parent = _visualizationSheet.AddContainer("c0", Color.black, new Vector2Int(100, 100), root);
+            parent.SetPadding(5, 5, 5, 5);
+            var scatter = _visualizationSheet.Add_PositiveNegativeVerticalBars(points, new Vector2Int(100, 100), parent);
+            scatter.SetPadding(50, 50, 50, 50);
+            scatter.backgroundColor = Color.white;
+
+            scatter.gridColor = new Color(.9f, .9f, .9f, .5f);
+
+            scatter.DrawAutomaticGrid(12, "X", "Y");
+
+            parent.SetTitle("Simple Bar Chart");
+        }
+
+         private void Test_Candles(int pCount = 100, int Y = 100)
+        {
+            _visualizationSheet.Awake();
+
+            var points = new double[pCount, 5];
+            var previous = 0.0;
+            for (int i = 0; i < pCount; ++i)
+            {
+                var newV = UnityEngine.Random.Range(0, 100);
+
+                points[i, 0] = i;
+                points[i, 1] = newV + previous; // low
+                previous = newV;
+
+                if(UnityEngine.Random.Range(0, 100) > 50)
+                {
+                    points[i, 2] = points[i, 1] + UnityEngine.Random.Range(21, 30) * .85; // high
+                    points[i, 3] = points[i, 1] + UnityEngine.Random.Range(3, 10) * .85; // open
+                    points[i, 4] = points[i, 1] + UnityEngine.Random.Range(11, 20) * .85; // close
+
+                }
+                else
+                {
+                    points[i, 2] = points[i, 1] + UnityEngine.Random.Range(21, 30) * .85; // high
+                    points[i, 3] = points[i, 1] + UnityEngine.Random.Range(11, 20) * .85; // close
+                    points[i, 4] = points[i, 1] + UnityEngine.Random.Range(3, 10) * .85; // open
+                }
+            }
+
+            var root = _visualizationSheet.AddPixelSizedContainer("root", new Vector2Int(800, 800), null);
+            root.style.alignSelf = Align.Center;
+
+            var parent = _visualizationSheet.AddContainer("c0", Color.black, new Vector2Int(100, 100), root);
+            parent.SetPadding(5, 5, 5, 5);
+            var scatter = _visualizationSheet.Add_CandleBars(points, new Vector2Int(100, 100), parent);
+            scatter.SetPadding(50, 50, 50, 50);
+            scatter.backgroundColor = Color.white;
+
+            scatter.gridColor = new Color(.9f, .9f, .9f, .5f);
+
+            scatter.DrawAutomaticGrid(12, "X", "Y");
+
+            parent.SetTitle("Simple Bar Chart");
+        }
+
         private void OnGUI()
         {
             if (GUILayout.Button(nameof(Test_SimpleLine)))
@@ -269,7 +370,6 @@ namespace Atomix.ChartBuilder
                 Test_ScatterFixedGrid_Classes();
             }
 
-
             if (GUILayout.Button(nameof(Test_ScatterFixedGrid_Classes) + "_smallValues"))
             {
                 Test_ScatterFixedGrid_Classes(35, 1, 1);
@@ -278,6 +378,21 @@ namespace Atomix.ChartBuilder
             if (GUILayout.Button(nameof(Test_ScatterFixedDelta_Values)))
             {
                 Test_ScatterFixedDelta_Values();
+            }
+
+            if (GUILayout.Button(nameof(Test_VerticalBars)))
+            {
+                Test_VerticalBars();
+            }
+            
+            if (GUILayout.Button(nameof(Test_PNVerticalBars)))
+            {
+                Test_PNVerticalBars();
+            }
+
+            if (GUILayout.Button(nameof(Test_Candles)))
+            {
+                Test_Candles();
             }
         }
     }
