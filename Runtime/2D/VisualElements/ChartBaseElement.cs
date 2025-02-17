@@ -1025,7 +1025,7 @@ namespace Atomix.ChartBuilder.VisualElements
                 float candle_leg_bottom = System.Math.Min(high, low);
                 float candle_leg_height = System.Math.Abs(GetYPixels(MathHelpers.Lerp(low, current_range_y.x, current_range_y.y)) - GetYPixels(MathHelpers.Lerp(high, current_range_y.x, current_range_y.y)));
 
-                var color = open - close < 0 ? VisualizationSheet.visualizationSettings.redToGreenGradient.Evaluate(0) : VisualizationSheet.visualizationSettings.redToGreenGradient.Evaluate(1);
+                var color = open > close ? VisualizationSheet.visualizationSettings.redToGreenGradient.Evaluate(0) : VisualizationSheet.visualizationSettings.redToGreenGradient.Evaluate(1);
                 painter2D.fillColor = color;
                 painter2D.strokeColor = color;
 
