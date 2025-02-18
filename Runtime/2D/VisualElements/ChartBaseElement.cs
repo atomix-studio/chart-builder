@@ -477,6 +477,17 @@ namespace Atomix.ChartBuilder.VisualElements
             };
         }
 
+        public void AppendLine(List<Vector2Double> points, Color lineColor, float lineWidth)
+        {
+            generateVisualContent += (meshGenerationContext) =>
+            {
+                _lineWidth = lineWidth;
+                _strokeColor = lineColor;
+
+                GenerateLineXY(meshGenerationContext, points, false);
+            };
+        }
+
         public void AppendLine(double[] points, Color lineColor, float lineWidth)
         {
             generateVisualContent += (meshGenerationContext) =>
@@ -538,6 +549,20 @@ namespace Atomix.ChartBuilder.VisualElements
         /// <param name="candleBars"></param>
         /// <param name="minSpacing"></param>
         public void AppendCandleBars(double[,] candleBars, float widthRatio = .9f)
+        {
+            generateVisualContent += (meshGenerationContext) =>
+            {
+                GenerateCandleBars(meshGenerationContext, candleBars, widthRatio, false);
+            };
+        }
+
+        /// <summary>
+        /// Takes a matrice of points with n colomns
+        /// order of columns > low, high, open, close values
+        /// </summary>
+        /// <param name="candleBars"></param>
+        /// <param name="minSpacing"></param>
+        public void AppendCandleBars(List<CandleData> candleBars, float widthRatio = .9f)
         {
             generateVisualContent += (meshGenerationContext) =>
             {
@@ -643,6 +668,32 @@ namespace Atomix.ChartBuilder.VisualElements
             painter2D.Stroke();
         }
 
+        protected void GenerateLineXY(MeshGenerationContext ctx, List<Vector2Double> points, bool initializeRange)
+        {
+            var painter2D = ctx.painter2D;
+
+            painter2D.lineWidth = _lineWidth;
+            painter2D.strokeColor = strokeColor;
+
+            if (initializeRange)
+                InitRange_pointsXY(points);
+
+            var relative_position_x = MathHelpers.Lerp(points[0].x, current_range_x.x, current_range_x.y);
+            var relative_position_y = MathHelpers.Lerp(points[0].y, current_range_y.x, current_range_y.y);
+
+            painter2D.BeginPath();
+            painter2D.MoveTo(Plot(relative_position_x, relative_position_y));
+
+            for (int i = 0; i < points.Count; i++)
+            {
+                relative_position_x = MathHelpers.Lerp(points[0].x, current_range_x.x, current_range_x.y);
+                relative_position_y = MathHelpers.Lerp(points[0].y, current_range_y.x, current_range_y.y);
+
+                painter2D.LineTo(Plot(relative_position_x, relative_position_y));
+            }
+
+            painter2D.Stroke();
+        }
         #endregion
 
         #region Scatter
@@ -1045,6 +1096,61 @@ namespace Atomix.ChartBuilder.VisualElements
             painter2D.ClosePath();
         }
 
+        /// <summary>
+        /// order of columns > low, high, open, close values
+        /// </summary>
+        /// <param name="ctx"></param>
+        /// <param name="candleBars"></param>
+        /// <param name="widthRatio"></param>
+        /// <param name="initializeRange"></param>
+        /// <exception cref="Exception"></exception>
+        protected void GenerateCandleBars(MeshGenerationContext ctx, List<CandleData> candleBars, float widthRatio, bool initializeRange)
+        {
+            var painter2D = ctx.painter2D;
+
+            if (candleBars.Count == 0)
+                return;
+
+            //_plottedPositions.Clear();
+            var bar_width = (float)real_width / candleBars.Count * widthRatio;
+
+            if (initializeRange)
+                InitRange_candles(candleBars);
+
+            painter2D.BeginPath();
+
+            for (int i = 0; i < candleBars.Count; ++i)
+            {
+                float low = (float)candleBars[i].low;
+                float high = (float)candleBars[i].high;
+                float open = (float)candleBars[i].open;
+                float close = (float)candleBars[i].close;
+
+                float candle_body_height = System.Math.Abs(GetYPixels(MathHelpers.Lerp(open, current_range_y.x, current_range_y.y)) - GetYPixels(MathHelpers.Lerp(close, current_range_y.x, current_range_y.y)));
+                float candle_body_bottom = System.Math.Min(open, close);
+                float candle_leg_bottom = System.Math.Min(high, low);
+                float candle_leg_height = System.Math.Abs(GetYPixels(MathHelpers.Lerp(low, current_range_y.x, current_range_y.y)) - GetYPixels(MathHelpers.Lerp(high, current_range_y.x, current_range_y.y)));
+
+                var color = open > close ? VisualizationSheet.visualizationSettings.redToGreenGradient.Evaluate(0) : VisualizationSheet.visualizationSettings.redToGreenGradient.Evaluate(1);
+                painter2D.fillColor = color;
+                painter2D.strokeColor = color;
+
+                var relative_position_x = MathHelpers.Lerp(i, current_range_x.x, current_range_x.y);
+                var relative_body_position_y = MathHelpers.Lerp(candle_body_bottom, current_range_y.x, current_range_y.y);
+                var plot_position = Plot(relative_position_x, relative_body_position_y);
+                // coloriser avec gradient
+                DrawRectangle(painter2D, plot_position.x, plot_position.y, candle_body_height, bar_width);
+
+                relative_position_x = MathHelpers.Lerp(i, current_range_x.x, current_range_x.y);
+                relative_body_position_y = MathHelpers.Lerp(candle_leg_bottom, current_range_y.x, current_range_y.y);
+                plot_position = Plot(relative_position_x, relative_body_position_y);
+                // coloriser avec gradient
+                DrawRectangle(painter2D, plot_position.x + bar_width / 2f, plot_position.y, candle_leg_height, bar_width / 6);
+
+            }
+            painter2D.ClosePath();
+        }
+
         #endregion
 
         #region Range Init
@@ -1099,14 +1205,28 @@ namespace Atomix.ChartBuilder.VisualElements
 
             MathHelpers.ColumnMinMax(points, 1, out var range_y);
             current_range_y = range_y;
-        } 
-        
+        }
+
+        protected void InitRange_pointsXY(List<Vector2Double> points)
+        {
+            MathHelpers.ColumnMinMax(points, 0, out var range_x, out var range_y);
+            current_range_x = range_x;
+            current_range_y = range_y;
+        }
+
         protected void InitRange_pointsXYZWV(double[,] points)
         {
             MathHelpers.ColumnMinMax(points, 0, out var range_x);
             current_range_x = range_x;
 
             MathHelpers.RowMinMax(points, 1, out var range_y);
+            current_range_y = range_y;
+        }
+
+        protected void InitRange_candles(List<CandleData> points)
+        {
+            current_range_x = new Vector2Double(0, points.Count);
+            MathHelpers.CandleMinMax(points, out var range_y);
             current_range_y = range_y;
         }
 

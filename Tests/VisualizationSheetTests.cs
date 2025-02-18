@@ -333,6 +333,55 @@ namespace Atomix.ChartBuilder
             parent.SetTitle("Simple Bar Chart");
         }
 
+        private void Test_Candles2(int pCount = 100, int Y = 100)
+        {
+            _visualizationSheet.Awake();
+
+            var points = new List<CandleData>();
+            var previous = 0.0;
+            for (int i = 0; i < pCount; ++i)
+            {
+                var newV = UnityEngine.Random.Range(0, 100);
+
+                var candle_data = new CandleData();
+
+                candle_data.low = newV + previous; // low
+                previous = newV;
+
+                if (UnityEngine.Random.Range(0, 100) > 50)
+                {
+                    candle_data.high = candle_data.low + UnityEngine.Random.Range(21, 30) * .85; // high
+                    candle_data.open = candle_data.low + UnityEngine.Random.Range(3, 10) * .85; // open
+                    candle_data.close = candle_data.low + UnityEngine.Random.Range(11, 20) * .85; // close
+
+                }
+                else
+                {
+                    candle_data.high = candle_data.low + UnityEngine.Random.Range(21, 30) * .85; // high
+                    candle_data.open = candle_data.low + UnityEngine.Random.Range(11, 20) * .85; // close
+                    candle_data.close = candle_data.low + UnityEngine.Random.Range(3, 10) * .85; // open
+                }
+
+                points.Add(candle_data);
+            }
+
+            var root = _visualizationSheet.AddPixelSizedContainer("root", new Vector2Int(800, 800), null);
+            root.style.alignSelf = Align.Center;
+
+            var parent = _visualizationSheet.AddContainer("c0", Color.black, new Vector2Int(100, 100), root);
+            parent.SetPadding(5, 5, 5, 5);
+            var scatter = _visualizationSheet.Add_CandleBars(points, new Vector2Int(100, 100), parent);
+            scatter.SetPadding(50, 50, 50, 50);
+            scatter.backgroundColor = Color.white;
+
+            scatter.gridColor = new Color(.9f, .9f, .9f, .5f);
+
+            scatter.DrawAutomaticGrid(12, "X", "Y");
+
+            parent.SetTitle("Simple Bar Chart");
+        }
+
+
         private void OnGUI()
         {
             if (GUILayout.Button(nameof(Test_SimpleLine)))
@@ -393,6 +442,11 @@ namespace Atomix.ChartBuilder
             if (GUILayout.Button(nameof(Test_Candles)))
             {
                 Test_Candles();
+            }
+
+            if (GUILayout.Button(nameof(Test_Candles2)))
+            {
+                Test_Candles2();
             }
         }
     }

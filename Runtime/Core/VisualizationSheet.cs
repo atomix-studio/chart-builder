@@ -112,6 +112,16 @@ namespace Atomix.ChartBuilder
             return AddChart(chart, container);
         }
 
+        public SimpleLineChart Add_SimpleLine(List<Vector2Double> points, float lineWidth, Vector2Int dimensions, VisualElement container = null)
+        {
+            var chart = new SimpleLineChart(points);
+
+            chart.SetLineWidth(lineWidth);
+            chart.SetDimensions(container != null ? LengthUnit.Percent : LengthUnit.Pixel, dimensions.x, dimensions.y);
+
+            return AddChart(chart, container);
+        }
+
         public SimpleLineChart Add_SimpleLine(double[] points, float lineWidth, Vector2Int dimensions, VisualElement container = null)
         {
             var chart = new SimpleLineChart(points);
@@ -182,6 +192,11 @@ namespace Atomix.ChartBuilder
             return AddChart(chart, container);
         }
 
-
+        public CandleBarChart Add_CandleBars(List<CandleData> bars, Vector2Int dimensions, VisualElement container = null)
+        {
+            var chart = new CandleBarChart(bars);
+            chart.SetDimensions(container != null ? LengthUnit.Percent : LengthUnit.Pixel, dimensions.x, dimensions.y);
+            return AddChart(chart, container);
+        }
     }
 }

@@ -62,5 +62,16 @@ namespace Atomix.ChartBuilder.VisualElements
             };
         }
 
+        public SimpleLineChart(List<Vector2Double> pointXY)
+        {
+            onRefresh += () => InitRange_pointsXY(pointXY);
+
+            backgroundColor = _backgroundColor;
+
+            generateVisualContent += (meshGenerationContext) =>
+            {
+                GenerateLineXY(meshGenerationContext, pointXY, true);
+            };
+        }
     }
 }

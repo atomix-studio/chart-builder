@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Atomix.ChartBuilder.VisualElements;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -16,16 +17,24 @@ namespace Atomix.ChartBuilder.Math
             return (value - inputMin) / (inputMax - inputMin) * (outputMax - outputMin) + outputMin;
         }
 
-        public static void ColumnMinMax(double[,] matrix, int columnIndex, out double min, out double max)
+        public static void ColumnMinMax(List<Vector2Double> matrix, int columnIndex, out Vector2Double minmax_x, out Vector2Double minmax_y)
         {
-            max = double.MinValue;
-            min = double.MaxValue;
+            var max_x = double.MinValue;
+            var min_x = double.MaxValue;
+            var max_y = double.MinValue;
+            var min_y = double.MaxValue;
 
-            for (int i = 0; i < matrix.GetLength(0); ++i)
+            for (int i = 0; i < matrix.Count; ++i)
             {
-                max = System.Math.Max(matrix[i, columnIndex], max);
-                min = System.Math.Min(matrix[i, columnIndex], min);
+                max_x = System.Math.Max(matrix[i].x, max_x);
+                min_x = System.Math.Min(matrix[i].x, min_x);
+
+                max_y = System.Math.Max(matrix[i].y, max_x);
+                min_y = System.Math.Min(matrix[i].y, min_x);
             }
+
+            minmax_x = new Vector2Double(min_x, max_x);
+            minmax_y = new Vector2Double(min_y, max_y);
         }
 
         public static void ColumnMinMax(List<double> vector, out double min, out double max)
@@ -74,6 +83,17 @@ namespace Atomix.ChartBuilder.Math
                     minMax.x = System.Math.Min(matrix[i, j], minMax.x);
                     minMax.y = System.Math.Max(matrix[i, j], minMax.y);
                 }
+            }
+        }
+
+        public static void CandleMinMax(List<CandleData> candleDatas, out Vector2Double minMax_y)
+        {
+            minMax_y = new Vector2Double(double.MaxValue, double.MinValue);
+
+            for (int i = 0; i < candleDatas.Count; ++i)
+            {
+                minMax_y.x = System.Math.Min(candleDatas[i].low, minMax_y.x);
+                minMax_y.y = System.Math.Max(candleDatas[i].high, minMax_y.y);
             }
         }
 
