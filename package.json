@@ -3,7 +3,7 @@
   "version": "1.0.1",
   "displayName": "Chart Builder",
   "description": "Unity UI Toolkit library for creating charts",
-  "unity": "6000.0",
+  "unity": "2022.1",
  "keywords": [
     "charts",
     "ui",
