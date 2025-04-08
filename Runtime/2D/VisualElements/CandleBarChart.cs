@@ -1,4 +1,3 @@
-﻿using NUnit.Framework;
 using System.Collections.Generic;
 
 namespace Atomix.ChartBuilder.VisualElements
